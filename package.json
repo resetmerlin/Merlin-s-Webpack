@@ -1,0 +1,12 @@
+{
+  "name": "Merlin-Webpack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/resetmerlin/Merlin-Webpack.git",
+  "author": "resetmerlin <resetmerlin@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^11.0.0",
+    "jest-haste-map": "^29.7.0"
+  }
+}
