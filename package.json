@@ -5,6 +5,9 @@
   "repository": "https://github.com/resetmerlin/Merlin-Webpack.git",
   "author": "resetmerlin <resetmerlin@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "node index.mjs --entry-point product/entry-point.js --output test.js --minify"
+  },
   "dependencies": {
     "@babel/core": "^7.25.2",
     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
@@ -14,6 +17,7 @@
     "jest-resolve": "^29.7.0",
     "jest-resolve-dependencies": "^29.7.0",
     "jest-worker": "^29.7.0",
+    "terser": "^5.36.0",
     "yargs": "^17.7.2"
   }
 }
