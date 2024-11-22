@@ -6,6 +6,7 @@ import fs from "fs";
 import JestHasteMap from "jest-haste-map";
 import Resolver from "jest-resolve";
 import yargs from "yargs";
+import { minify } from "terser";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "product");
 
@@ -109,11 +110,13 @@ const results = await Promise.all(
     })
 );
 
-const output = [
-  fs.readFileSync("./require.js", "utf8"),
-  ...results,
-  "requireModule(0);",
-].join("\n");
+let code = fs.readFileSync("./require.js", "utf8");
+
+if (options.minify) {
+  code = await minify(code, { sourceMap: true }).then((res) => res.code);
+}
+
+const output = [code.code, ...results, "requireModule(0);"].join("\n");
 
 if (options.output) {
   fs.writeFileSync(options.output, output, "utf8");
