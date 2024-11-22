@@ -2,7 +2,6 @@ import { cpus } from "os";
 import { dirname, resolve, join } from "path";
 import { fileURLToPath } from "url";
 import { Worker } from "jest-worker";
-import chalk from "chalk";
 import fs from "fs";
 import JestHasteMap from "jest-haste-map";
 import Resolver from "jest-resolve";
@@ -18,19 +17,22 @@ const hasteMapOptions = {
   rootDir: root,
   roots: [root],
 };
+
 const hasteMap = new JestHasteMap.default(hasteMapOptions);
+
 await hasteMap.setupCachePath(hasteMapOptions);
+
 const { hasteFS, moduleMap } = await hasteMap.build();
 
 const options = yargs(process.argv).argv;
+
 const entryPoint = resolve(process.cwd(), options.entryPoint);
+
 if (!hasteFS.exists(entryPoint)) {
   throw new Error(
     "`--entry-point` does not exist. Please provide a path to a valid file."
   );
 }
-
-console.log(chalk.bold(`❯ Building ${chalk.blue(options.entryPoint)}`));
 
 const resolver = new Resolver.default(moduleMap, {
   extensions: [".js"],
@@ -39,9 +41,15 @@ const resolver = new Resolver.default(moduleMap, {
 });
 
 const seen = new Set();
+
 const modules = new Map();
+
 const queue = [entryPoint];
+
 let id = 0;
+
+console.log(queue);
+
 while (queue.length) {
   const module = queue.shift();
   if (seen.has(module)) {
@@ -59,18 +67,19 @@ while (queue.length) {
   );
 
   const code = fs.readFileSync(module, "utf8");
+  console.log(module);
+
   const metadata = {
     id: id++,
     code,
     dependencyMap,
   };
+
   modules.set(module, metadata);
+
   queue.push(...dependencyMap.values());
 }
 
-console.log(chalk.bold(`❯ Found ${chalk.blue(seen.size)} files`));
-
-console.log(chalk.bold(`❯ Serializing bundle`));
 const wrapModule = (id, code) =>
   `define(${id}, function(module, exports, require) {\n${code}});`;
 
@@ -105,8 +114,6 @@ const output = [
   ...results,
   "requireModule(0);",
 ].join("\n");
-
-console.log(output);
 
 if (options.output) {
   fs.writeFileSync(options.output, output, "utf8");
