@@ -6,7 +6,7 @@
   "author": "resetmerlin <resetmerlin@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node index.mjs --entry-point product/entry-point.js --output test.js --minify"
+    "start": "node index.mjs --entry-point product/entry-point.js --output 'test.js index.html' --minify"
   },
   "dependencies": {
     "@babel/core": "^7.25.2",

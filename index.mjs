@@ -7,6 +7,7 @@ import JestHasteMap from "jest-haste-map";
 import Resolver from "jest-resolve";
 import yargs from "yargs";
 import { minify } from "terser";
+import { createHash } from "crypto";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "product");
 
@@ -17,6 +18,7 @@ const hasteMapOptions = {
   platforms: [],
   rootDir: root,
   roots: [root],
+  id: "Merlin's Bundler",
 };
 
 const hasteMap = new JestHasteMap.default(hasteMapOptions);
@@ -48,8 +50,6 @@ const modules = new Map();
 const queue = [entryPoint];
 
 let id = 0;
-
-console.log(queue);
 
 while (queue.length) {
   const module = queue.shift();
@@ -105,6 +105,12 @@ const results = await Promise.all(
           ),
           `require(${dependency.id})`
         );
+
+        if (options.minify) {
+          code = await minify(code, { sourceMap: false }).then(
+            (res) => res.code
+          );
+        }
       }
       return wrapModule(id, code);
     })
@@ -112,14 +118,42 @@ const results = await Promise.all(
 
 let code = fs.readFileSync("./require.js", "utf8");
 
-if (options.minify) {
-  code = await minify(code, { sourceMap: true }).then((res) => res.code);
-}
+const hash = createHash("sha256").update(code).digest("hex");
 
-const output = [code.code, ...results, "requireModule(0);"].join("\n");
+const output = [code, ...results, "requireModule(0);"].join("\n");
 
 if (options.output) {
-  fs.writeFileSync(options.output, output, "utf8");
+  const outputs = options.output.split(" ");
+
+  const giveFileName = outputs.find((file) => /\.js$/.test(file)).split(".");
+
+  const filename = [
+    [...giveFileName].shift(),
+    hash,
+    [...giveFileName].pop(),
+  ].join(".");
+
+  const htmlName = outputs.find((file) => /\.html$/.test(file));
+
+  fs.writeFileSync(filename, output, "utf8");
+
+  fs.writeFileSync(
+    htmlName ?? "index.html",
+    `<!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Document</title>
+        </head>
+        <body>
+          <div id="app"></div>
+          <script src='${filename}'></script>
+        </body>
+      </html>
+    `,
+    "utf8"
+  );
 }
 
 worker.end();
