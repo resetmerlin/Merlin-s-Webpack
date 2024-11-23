@@ -17,11 +17,15 @@ const hasteMapOptions = {
   platforms: [],
   rootDir: root,
   roots: [root],
+  cacheDirectory: "./cache",
+  id: "Merlin's Bundler",
 };
 
 const hasteMap = new JestHasteMap.default(hasteMapOptions);
 
 await hasteMap.setupCachePath(hasteMapOptions);
+
+console.log(hasteMap.getCacheFilePath());
 
 const { hasteFS, moduleMap } = await hasteMap.build();
 
