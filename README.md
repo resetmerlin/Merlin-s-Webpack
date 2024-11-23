@@ -8,7 +8,7 @@ Build webpack from scratch
 
 - [x] _Medium:_ Learn about [source maps](https://firefox-source-docs.mozilla.org/devtools-user/debugger/how_to/use_a_source_map/index.html) and generate the corresponding `.map` file for your bundle.
 
-- [ ] _Medium:_ Add a `--dev` option that starts a HTTP server that serves the bundled code through an HTTP endpoint.
+- [x] _Medium:_ Add a `--dev` option that starts a HTTP server that serves the bundled code through an HTTP endpoint.
 
 - [ ] _Medium:_ After implementing the HTTP server, make use of `jest-haste-map`’s [`watch`](https://github.com/facebook/jest/blob/04b75978178ccb31bccb9f9b2f8a0db2fecc271e/packages/jest-haste-map/src/index.ts#L75) function to listen for changes and re-bundle automatically.
 
