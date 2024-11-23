@@ -157,9 +157,10 @@ if (options.output) {
 
     fs.writeFileSync(filename, minifiedCode.code, "utf8");
     fs.writeFileSync(mapName, minifiedCode.map, "utf8");
-
-    worker.end();
   } else {
-    fs.writeFileSync(filename, bundledCode, "utf8");
+    const minifiedCode = await minify(bundledCode);
+
+    fs.writeFileSync(filename, minifiedCode.code, "utf8");
   }
+  worker.end();
 }
