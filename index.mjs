@@ -49,8 +49,6 @@ const queue = [entryPoint];
 
 let id = 0;
 
-console.log(queue);
-
 while (queue.length) {
   const module = queue.shift();
   if (seen.has(module)) {
@@ -105,6 +103,12 @@ const results = await Promise.all(
           ),
           `require(${dependency.id})`
         );
+
+        if (options.minify) {
+          code = await minify(code, { sourceMap: false }).then(
+            (res) => res.code
+          );
+        }
       }
       return wrapModule(id, code);
     })
@@ -112,11 +116,7 @@ const results = await Promise.all(
 
 let code = fs.readFileSync("./require.js", "utf8");
 
-if (options.minify) {
-  code = await minify(code, { sourceMap: true }).then((res) => res.code);
-}
-
-const output = [code.code, ...results, "requireModule(0);"].join("\n");
+const output = [code, ...results, "requireModule(0);"].join("\n");
 
 if (options.output) {
   fs.writeFileSync(options.output, output, "utf8");
