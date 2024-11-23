@@ -6,7 +6,7 @@ Build webpack from scratch
 
 - [x] Add a cache that will store transformed files and only re-compile files that have changed.
 
-- [ ] _Medium:_ Learn about [source maps](https://firefox-source-docs.mozilla.org/devtools-user/debugger/how_to/use_a_source_map/index.html) and generate the corresponding `.map` file for your bundle.
+- [x] _Medium:_ Learn about [source maps](https://firefox-source-docs.mozilla.org/devtools-user/debugger/how_to/use_a_source_map/index.html) and generate the corresponding `.map` file for your bundle.
 
 - [ ] _Medium:_ Add a `--dev` option that starts a HTTP server that serves the bundled code through an HTTP endpoint.
 
