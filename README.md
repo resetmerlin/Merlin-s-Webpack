@@ -4,7 +4,7 @@ Build webpack from scratch
 
 - [x] Add a `--minify` flag that runs a minifier like [`terser`](https://github.com/terser/terser) on each individual file in the bundle.
 
-- [ ] Add a cache that will store transformed files and only re-compile files that have changed.
+- [x] Add a cache that will store transformed files and only re-compile files that have changed.
 
 - [ ] _Medium:_ Learn about [source maps](https://firefox-source-docs.mozilla.org/devtools-user/debugger/how_to/use_a_source_map/index.html) and generate the corresponding `.map` file for your bundle.
 
