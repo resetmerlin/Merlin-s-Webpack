@@ -105,37 +105,28 @@ const results = await Promise.all(
           ),
           `require(${dependency.id})`
         );
-
-        if (options.minify) {
-          code = await minify(code, { sourceMap: false }).then(
-            (res) => res.code
-          );
-        }
       }
+
       return wrapModule(id, code);
     })
 );
 
 let code = fs.readFileSync("./require.js", "utf8");
 
-const hash = createHash("sha256").update(code).digest("hex");
-
-const output = [code, ...results, "requireModule(0);"].join("\n");
-
 if (options.output) {
   const outputs = options.output.split(" ");
-
-  const giveFileName = outputs.find((file) => /\.js$/.test(file)).split(".");
-
-  const filename = [
-    [...giveFileName].shift(),
-    hash,
-    [...giveFileName].pop(),
-  ].join(".");
-
+  const bundledName = outputs.find((file) => /\.js$/.test(file)).split(".");
   const htmlName = outputs.find((file) => /\.html$/.test(file));
 
-  fs.writeFileSync(filename, output, "utf8");
+  const extension = bundledName.pop();
+  const name = bundledName.shift();
+
+  const bundledCode = [code, ...results, "requireModule(0);"].join("\n");
+
+  const hash = createHash("sha256").update(bundledCode).digest("hex");
+
+  const mapName = [name, hash, extension, "map"].join(".");
+  const filename = [name, hash, extension].join(".");
 
   fs.writeFileSync(
     htmlName ?? "index.html",
@@ -154,6 +145,21 @@ if (options.output) {
     `,
     "utf8"
   );
-}
 
-worker.end();
+  if (options.minify) {
+    const minifiedCode = await minify(bundledCode, {
+      sourceMap: {
+        filename: filename,
+        url: mapName,
+        includeSources: true,
+      },
+    });
+
+    fs.writeFileSync(filename, minifiedCode.code, "utf8");
+    fs.writeFileSync(mapName, minifiedCode.map, "utf8");
+
+    worker.end();
+  } else {
+    fs.writeFileSync(filename, bundledCode, "utf8");
+  }
+}
