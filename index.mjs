@@ -2,12 +2,13 @@ import { cpus } from "os";
 import { dirname, resolve, join } from "path";
 import { fileURLToPath } from "url";
 import { Worker } from "jest-worker";
-import fs from "fs";
+import fs, { readFileSync } from "fs";
 import JestHasteMap from "jest-haste-map";
 import Resolver from "jest-resolve";
 import yargs from "yargs";
 import { minify } from "terser";
 import { createHash } from "crypto";
+import { createServer } from "http-server";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "product");
 
@@ -163,4 +164,18 @@ if (options.output) {
     fs.writeFileSync(filename, minifiedCode.code, "utf8");
   }
   worker.end();
+}
+
+if (options.dev) {
+  const server = createServer((req, res) => {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/html");
+    const html = readFileSync("./index.html");
+    res.write(html);
+    res.end();
+  });
+
+  server.listen(5173, "localhost", () => {
+    console.log(`Server is running on http://localhost:5173`);
+  });
 }
