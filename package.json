@@ -6,7 +6,7 @@
   "author": "resetmerlin <resetmerlin@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node index.mjs --entry-point product/entry-point.js --output 'test.js index.html' --minify",
+    "start": "node index.mjs",
     "dev": "yarn start --dev"
   },
   "dependencies": {
