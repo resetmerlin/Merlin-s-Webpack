@@ -6,7 +6,8 @@ import JestHasteMap from "jest-haste-map";
 import Resolver from "jest-resolve";
 import { minify } from "terser";
 import { createHash } from "crypto";
-import { createServer } from "http-server";
+import { createServer } from "http";
+import { compress } from "brotli";
 
 /**
  * MerlinBunlder is a bundler that uses hasted map( Facebook's haste module system) for collection.
@@ -70,6 +71,8 @@ class MerlinBundler {
 
     fs.writeFileSync(filename, minifiedCode.code, "utf8");
     fs.writeFileSync(url, minifiedCode.map, "utf8");
+    fs.writeFileSync(`${filename}.br`, compress(readFileSync(filename)));
+
     fs.writeFileSync(
       htmlName,
       `<!DOCTYPE html>
@@ -88,13 +91,32 @@ class MerlinBundler {
       "utf8"
     );
 
+    fs.writeFileSync(`${htmlName}.br`, compress(readFileSync(htmlName)));
+
     if (this._dev) {
       const server = createServer((req, res) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "text/html");
-        const html = readFileSync("./index.html");
-        res.write(html);
-        res.end();
+        if (req.url === "/") {
+          res.setHeader("Content-Type", "text/html");
+          res.setHeader("Content-Encoding", "br");
+          res.statusCode = 200;
+
+          const html = readFileSync("./index.html.br");
+          res.write(html);
+          res.end();
+        }
+
+        if (req.url.endsWith(".js")) {
+          res.setHeader(
+            "Content-Type",
+            "application/javascript; charset=utf-8"
+          );
+          res.setHeader("Content-Encoding", "br");
+          res.statusCode = 200;
+
+          const javascript = readFileSync("." + req.url + ".br");
+          res.write(javascript);
+          res.end();
+        }
       });
 
       server.listen(5173, "localhost", () => {
