@@ -4,7 +4,7 @@ Build webpack from scratch
 
 - [x] Add a `--minify` flag that runs a minifier like [`terser`](https://github.com/terser/terser) on each individual file in the bundle.
 
-- [ ] Add a `--Gzip` flag that send response of compressed resources or use [`brotli`](https://www.npmjs.com/package/brotli), learn about [`Content-Encoding`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)
+- [x] Add a `--Gzip` flag that send response of compressed resources or use [`brotli`](https://www.npmjs.com/package/brotli), learn about [`Content-Encoding`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)
 
 - [ ] Add a `--treeShaking` flag that tree shakes the code
 
