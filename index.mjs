@@ -235,6 +235,8 @@ class MerlinBundler {
     const { sourceMapName, hashedFileName, bundledCode } =
       this.retrieveMetadataForOpt(bundledResult);
 
+    console.log(bundledCode);
+
     await this.treeShaking(bundledCode);
 
     const minifiedCode = await this.minification(
@@ -264,9 +266,16 @@ class MerlinBundler {
 
   async treeShaking(code) {
     const ast = parse(code, { ecmaVersion: "latest" });
-    const codeGenerator = generate(ast);
 
-    fs.writeFileSync("ast.json", JSON.stringify(codeGenerator), "utf8");
+    function retrieveGraph(ast) {
+      const graph = new Map();
+
+      ast.body.forEach((node) => {
+        if (node.type === "VariableDeclaration") {
+          graph.set();
+        }
+      });
+    }
   }
 
   retrieveMetadataForOpt(bundledResult) {
