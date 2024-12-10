@@ -8,6 +8,8 @@ import { minify } from "terser";
 import { createHash } from "crypto";
 import { createServer } from "http";
 import { compress } from "brotli";
+import { parse } from "acorn";
+import { generate } from "escodegen";
 
 /**
  * MerlinBunlder is a bundler that uses hasted map( Facebook's haste module system) for collection.
@@ -305,9 +307,9 @@ class MerlinBundler {
   }
 }
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "product");
+const root = join(dirname(fileURLToPath(import.meta.url)), "csr");
 
-const entryPoint = resolve(process.cwd(), "product/entry-point.js");
+const entryPoint = resolve(process.cwd(), "csr/index.js");
 
 const output = ["test.js", "index.html"];
 
