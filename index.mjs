@@ -8,8 +8,6 @@ import { minify } from "terser";
 import { createHash } from "crypto";
 import { createServer } from "http";
 import { compress } from "brotli";
-import { parse } from "acorn";
-import { generate } from "escodegen";
 
 /**
  * MerlinBunlder is a bundler that uses hasted map( Facebook's haste module system) for collection.
@@ -28,7 +26,7 @@ import { generate } from "escodegen";
  *
  */
 class MerlinBundler {
-  constructor(root, hasteMapOptions, entryPoint, outputs, isDev = false) {
+  constructor({ root, hasteMapOptions, entryPoint, outputs, isDev = false }) {
     this._root = root;
     this._hasteMapOptions = hasteMapOptions;
     this._entryPoint = entryPoint;
@@ -36,34 +34,16 @@ class MerlinBundler {
     this._dev = isDev;
   }
 
-  static async create({ root, hasteMapOptions, entryPoint, output, isDev }) {
-    const merlinBundler = new MerlinBundler(
-      root,
-      hasteMapOptions,
-      entryPoint,
-      output,
-      isDev
-    );
-
-    await merlinBundler.setUp(hasteMapOptions);
-
-    return merlinBundler;
-  }
-
-  async setUp(hasteMapOptions) {
-    const HasteMap = JestHasteMap.default;
-    this._hasteMap = await HasteMap.create(hasteMapOptions);
-
-    await this._hasteMap.setupCachePath(hasteMapOptions);
-  }
-
-  async bundle() {
+  async _bundle() {
     const { hasteFS, moduleMap } = await this.collection();
+
     const dependencyGraph = await this.createDependencyGraph(
       hasteFS,
       moduleMap
     );
+
     const transpiledCode = await this.transformation(dependencyGraph);
+
     const { filename, url, minifiedCode } = await this.optimization(
       transpiledCode
     );
@@ -78,22 +58,36 @@ class MerlinBundler {
     fs.writeFileSync(
       htmlName,
       `<!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>Document</title>
-        </head>
-        <body>
-          <div id="app"></div>
-          <script src='${filename}'></script>
-        </body>
-      </html>
-    `,
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Document</title>
+          </head>
+          <body>
+            <div id="app"></div>
+            <script src='${filename}'></script>
+          </body>
+        </html>
+      `,
       "utf8"
     );
 
     fs.writeFileSync(`${htmlName}.br`, compress(readFileSync(htmlName)));
+  }
+
+  async bundle() {
+    const HasteMap = JestHasteMap.default;
+
+    this._hasteMap = await HasteMap.create(this._hasteMapOptions);
+
+    this._hasteMap.on("change", async ({ eventQueue }) => {
+      console.log("Detected file changes:", eventQueue);
+
+      await this._bundle();
+    });
+
+    await this._bundle();
 
     if (this._dev) {
       const server = createServer((req, res) => {
@@ -200,7 +194,7 @@ class MerlinBundler {
     const results = await Promise.all(
       Array.from(dependencyGraph)
         .reverse()
-        .map(async ([module, metadata]) => {
+        .map(async ([_, metadata]) => {
           let { id, code } = metadata;
           ({ code } = await worker.transformFile(code));
           for (const [
@@ -311,7 +305,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "csr");
 
 const entryPoint = resolve(process.cwd(), "csr/index.js");
 
-const output = ["test.js", "index.html"];
+const outputs = ["test.js", "index.html"];
 
 const hasteMapOptions = {
   extensions: ["js"],
@@ -322,13 +316,14 @@ const hasteMapOptions = {
   id: "Merlin's Bundler",
   watch: true,
   maxWorkers: 4,
+  retainAllFiles: true,
 };
 
-const bundler = await MerlinBundler.create({
+const bundler = new MerlinBundler({
   root,
   hasteMapOptions,
   entryPoint,
-  output,
+  outputs,
   isDev: true,
 });
 
