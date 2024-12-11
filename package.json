@@ -26,5 +26,8 @@
     "jest-worker": "^29.7.0",
     "terser": "^5.36.0",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
   }
 }
