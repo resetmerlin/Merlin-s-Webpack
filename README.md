@@ -1,4 +1,9 @@
-# Merlin-s-Webpack
+# EnchantPack - Merlin's bundler
+
+<div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+  <img src="https://github.com/user-attachments/assets/ab807645-efc4-414d-9e03-e0bad1aceb72" alt="Image" />
+</div>
+
 
 Build webpack from scratch
 
