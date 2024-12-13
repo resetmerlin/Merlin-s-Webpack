@@ -26,7 +26,21 @@ import { compress } from "brotli";
  *
  */
 class MerlinBundler {
-  constructor({ root, hasteMapOptions, entryPoint, outputs, isDev = false }) {
+  private _root: any;
+  private _hasteMapOptions: any;
+  private _outputs: any;
+  private _entryPoint: any;
+  private _dev: any;
+
+  constructor({
+    root,
+    hasteMapOptions,
+    entryPoint,
+    outputs,
+    isDev = false,
+  }: {
+    root: string;
+  }) {
     this._root = root;
     this._hasteMapOptions = hasteMapOptions;
     this._entryPoint = entryPoint;
