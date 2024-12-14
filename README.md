@@ -4,7 +4,6 @@
   <img src="https://github.com/user-attachments/assets/ab807645-efc4-414d-9e03-e0bad1aceb72" alt="Image" />
 </div>
 
-
 Build webpack from scratch
 
 - [x] Add a `--minify` flag that runs a minifier like [`terser`](https://github.com/terser/terser) on each individual file in the bundle.

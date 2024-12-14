@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "ES2022",
-    "outDir": "./dist",
-    "rootDir": ".",
-    "declaration": true,
-    "strict": true
+    "target": "ES2020", // Ensures compatibility with modern environments
+    "module": "NodeNext", // Aligns module resolution with Node.js (supports both ES and CommonJS)
+    "moduleResolution": "NodeNext", // Resolves modules according to Node.js behavior
+    "outDir": "./dist", // Output directory for compiled files
+    "rootDir": ".", // Root directory for source files
+    "declaration": true, // Generates `.d.ts` files for type definitions
+    "strict": true, // Enables all strict type checking options
+    "esModuleInterop": true, // Ensures compatibility with CommonJS modules
+    "allowSyntheticDefaultImports": true, // Enables default imports for CommonJS
+    "resolveJsonModule": true, // Allows importing `.json` files
+    "skipLibCheck": true // Skips type checking for third-party libraries
   },
   "include": ["**/*"],
-  "exclude": ["dist", "node_modules", "jasmine", "jest-haste-map"]
+  "exclude": ["dist", "node_modules"]
 }
