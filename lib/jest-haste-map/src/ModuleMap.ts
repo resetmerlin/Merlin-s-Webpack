@@ -30,7 +30,7 @@ export default class ModuleMap implements IModuleMap {
     let arr = [...map];
     if (arr[0] && arr[0][1] instanceof Map) {
       arr = arr.map(
-        el => [el[0], this.mapToArrayRecursive(el[1])] as [string, unknown],
+        (el) => [el[0], this.mapToArrayRecursive(el[1])] as [string, unknown],
       );
     }
     return arr;
@@ -40,7 +40,7 @@ export default class ModuleMap implements IModuleMap {
     arr: ReadonlyArray<[string, unknown]>,
   ): Map<string, unknown> {
     if (arr[0] && Array.isArray(arr[1])) {
-      arr = arr.map(el => [
+      arr = arr.map((el) => [
         el[0],
         this.mapFromArrayRecursive(el[1] as Array<[string, unknown]>),
       ]) as Array<[string, unknown]>;

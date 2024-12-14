@@ -5,23 +5,23 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { DependencyExtractor } from "../types";
+import type { DependencyExtractor } from '../types';
 
-const NOT_A_DOT = "(?<!\\.\\s*)";
+const NOT_A_DOT = '(?<!\\.\\s*)';
 const CAPTURE_STRING_LITERAL = (pos: number) =>
   `([\`'"])([^'"\`]*?)(?:\\${pos})`;
-const WORD_SEPARATOR = "\\b";
-const LEFT_PARENTHESIS = "\\(";
-const RIGHT_PARENTHESIS = "\\)";
-const WHITESPACE = "\\s*";
-const OPTIONAL_COMMA = "(:?,\\s*)?";
+const WORD_SEPARATOR = '\\b';
+const LEFT_PARENTHESIS = '\\(';
+const RIGHT_PARENTHESIS = '\\)';
+const WHITESPACE = '\\s*';
+const OPTIONAL_COMMA = '(:?,\\s*)?';
 
 function createRegExp(parts: Array<string>, flags: string) {
-  return new RegExp(parts.join(""), flags);
+  return new RegExp(parts.join(''), flags);
 }
 
 function alternatives(...parts: Array<string>) {
-  return `(?:${parts.join("|")})`;
+  return `(?:${parts.join('|')})`;
 }
 
 function functionCallStart(...names: Array<string>) {
@@ -40,34 +40,34 @@ const LINE_COMMENT_RE = /\/\/.*/g;
 
 const REQUIRE_OR_DYNAMIC_IMPORT_RE = createRegExp(
   [
-    ...functionCallStart("require", "import"),
+    ...functionCallStart('require', 'import'),
     CAPTURE_STRING_LITERAL(1),
     WHITESPACE,
     OPTIONAL_COMMA,
     RIGHT_PARENTHESIS,
   ],
-  "g"
+  'g',
 );
 
 const IMPORT_OR_EXPORT_RE = createRegExp(
   [
-    "\\b(?:import|export)\\s+(?!type(?:of)?\\s+)(?:[^'\"]+\\s+from\\s+)?",
+    '\\b(?:import|export)\\s+(?!type(?:of)?\\s+)(?:[^\'"]+\\s+from\\s+)?',
     CAPTURE_STRING_LITERAL(1),
   ],
-  "g"
+  'g',
 );
 
 const JEST_EXTENSIONS_RE = createRegExp(
   [
     ...functionCallStart(
-      "jest\\s*\\.\\s*(?:requireActual|requireMock|createMockFromModule)"
+      'jest\\s*\\.\\s*(?:requireActual|requireMock|createMockFromModule)',
     ),
     CAPTURE_STRING_LITERAL(1),
     WHITESPACE,
     OPTIONAL_COMMA,
     RIGHT_PARENTHESIS,
   ],
-  "g"
+  'g',
 );
 
 export const extractor: DependencyExtractor = {
@@ -80,8 +80,8 @@ export const extractor: DependencyExtractor = {
     };
 
     code
-      .replaceAll(BLOCK_COMMENT_RE, "")
-      .replaceAll(LINE_COMMENT_RE, "")
+      .replaceAll(BLOCK_COMMENT_RE, '')
+      .replaceAll(LINE_COMMENT_RE, '')
       .replace(IMPORT_OR_EXPORT_RE, addDependency)
       .replace(REQUIRE_OR_DYNAMIC_IMPORT_RE, addDependency)
       .replace(JEST_EXTENSIONS_RE, addDependency);
