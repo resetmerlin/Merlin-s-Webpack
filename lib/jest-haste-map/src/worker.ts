@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {createHash} from 'crypto';
+import { createHash } from 'crypto';
 import * as path from 'path';
 import * as fs from 'graceful-fs';
-import {requireOrImportModule} from 'jest-util';
+import { requireOrImportModule } from 'jest-util';
 import blacklist from './blacklist';
 import H from './constants';
-import {extractor as defaultDependencyExtractor} from './lib/dependencyExtractor';
+import { extractor as defaultDependencyExtractor } from './lib/dependencyExtractor';
 import type {
   DependencyExtractor,
   HasteImpl,
@@ -46,7 +46,7 @@ export async function worker(data: WorkerMessage): Promise<WorkerMetadata> {
   let module: WorkerMetadata['module'];
   let sha1: WorkerMetadata['sha1'];
 
-  const {computeDependencies, computeSha1, rootDir, filePath} = data;
+  const { computeDependencies, computeSha1, rootDir, filePath } = data;
 
   const getContent = (): string => {
     if (content === undefined) {
@@ -103,7 +103,7 @@ export async function worker(data: WorkerMessage): Promise<WorkerMetadata> {
     sha1 = sha1hex(content || fs.readFileSync(filePath));
   }
 
-  return {dependencies, id, module, sha1};
+  return { dependencies, id, module, sha1 };
 }
 
 export async function getSha1(data: WorkerMessage): Promise<WorkerMetadata> {

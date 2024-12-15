@@ -64,7 +64,7 @@ class Jasmine {
   render(component) {
     if (!component) return;
 
-    if (typeof component === "string") {
+    if (typeof component === 'string') {
       return document.createTextNode(component);
     }
 

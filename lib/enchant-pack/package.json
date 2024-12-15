@@ -1,0 +1,20 @@
+{
+  "name": "enchant-pack",
+  "packageManager": "yarn@4.5.3",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@types/babel__core": "^7",
+    "@types/node": "^22.10.2"
+  },
+  "dependencies": {
+    "jest-resolve": "^29.7.0",
+    "jest-worker": "^29.7.0",
+    "terser": "^5.37.0"
+  }
+}

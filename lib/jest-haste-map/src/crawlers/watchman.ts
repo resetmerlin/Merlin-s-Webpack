@@ -6,7 +6,7 @@
  */
 
 import * as path from 'path';
-import watchman = require('fb-watchman');
+import watchman from 'fb-watchman';
 import H from '../constants';
 import * as fastPath from '../lib/fast_path';
 import normalizePathSep from '../lib/normalizePathSep';
@@ -42,13 +42,13 @@ type WatchmanQueryResponse = {
   clock:
     | string
     | {
-        scm: {'mergebase-with': string; mergebase: string};
+        scm: { 'mergebase-with': string; mergebase: string };
         clock: string;
       };
   files: Array<{
     name: string;
     exists: boolean;
-    mtime_ms: number | {toNumber: () => number};
+    mtime_ms: number | { toNumber: () => number };
     size: number;
     'content.sha1hex'?: string;
   }>;
@@ -95,7 +95,7 @@ export async function watchmanCrawl(options: CrawlerOptions): Promise<{
   hasteMap: InternalHasteMap;
 }> {
   const fields = ['name', 'exists', 'mtime_ms', 'size'];
-  const {data, extensions, ignore, rootDir, roots} = options;
+  const { data, extensions, ignore, rootDir, roots } = options;
   const defaultWatchExpression: Array<any> = ['allof', ['type', 'f']];
   const clocks = data.clocks;
   const client = new watchman.Client();
@@ -116,12 +116,12 @@ export async function watchmanCrawl(options: CrawlerOptions): Promise<{
     // Otherwise use the older and less optimal suffix tuple array
     defaultWatchExpression.push([
       'anyof',
-      ...extensions.map(extension => ['suffix', extension]),
+      ...extensions.map((extension) => ['suffix', extension]),
     ]);
   }
 
   let clientError;
-  client.on('error', error => (clientError = watchmanError(error)));
+  client.on('error', (error) => (clientError = watchmanError(error)));
 
   const cmd = <T>(...args: Array<any>): Promise<T> =>
     new Promise((resolve, reject) =>
@@ -131,7 +131,7 @@ export async function watchmanCrawl(options: CrawlerOptions): Promise<{
     );
 
   if (options.computeSha1) {
-    const {capabilities} =
+    const { capabilities } =
       await cmd<WatchmanListCapabilitiesResponse>('list-capabilities');
 
     if (capabilities.includes('field-content.sha1hex')) {
@@ -144,7 +144,7 @@ export async function watchmanCrawl(options: CrawlerOptions): Promise<{
   ): Promise<WatchmanRoots> {
     const watchmanRoots = new Map();
     await Promise.all(
-      roots.map(async root => {
+      roots.map(async (root) => {
         const response = await cmd<WatchmanWatchProjectResponse>(
           'watch-project',
           root,
@@ -183,7 +183,7 @@ export async function watchmanCrawl(options: CrawlerOptions): Promise<{
         if (directoryFilters.length > 0) {
           expression.push([
             'anyof',
-            ...directoryFilters.map(dir => ['dirname', dir]),
+            ...directoryFilters.map((dir) => ['dirname', dir]),
           ]);
 
           for (const directory of directoryFilters) {
@@ -210,9 +210,9 @@ export async function watchmanCrawl(options: CrawlerOptions): Promise<{
         const query =
           since === undefined
             ? // Use the `since` generator if we have a clock available
-              {expression, fields, glob, glob_includedotfiles: true}
+              { expression, fields, glob, glob_includedotfiles: true }
             : // Otherwise use the `glob` filter
-              {expression, fields, since};
+              { expression, fields, since };
 
         const response = await cmd<WatchmanQueryResponse>('query', root, query);
 

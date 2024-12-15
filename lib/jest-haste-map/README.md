@@ -40,8 +40,8 @@ const map = new HasteMap.default({
 ```javascript
 import HasteMap from 'jest-haste-map';
 import os from 'os';
-import {dirname} from 'path';
-import {fileURLToPath} from 'url';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const root = dirname(fileURLToPath(import.meta.url));
 
@@ -55,7 +55,7 @@ const map = new HasteMap.default({
   rootDir: root, //The project root.
 });
 
-const {hasteFS} = await map.build();
+const { hasteFS } = await map.build();
 
 const files = hasteFS.getAllFiles();
 

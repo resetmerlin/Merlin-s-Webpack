@@ -6,7 +6,7 @@
  */
 
 // eslint-disable-next-line no-restricted-imports
-import type {Stats} from 'fs';
+import type { Stats } from 'fs';
 import type HasteFS from './HasteFS';
 import type ModuleMap from './ModuleMap';
 
@@ -55,7 +55,7 @@ export interface IHasteFS {
 
 export interface IHasteMap {
   on(eventType: 'change', handler: (event: ChangeEvent) => void): void;
-  build(): Promise<{hasteFS: IHasteFS; moduleMap: IModuleMap}>;
+  build(): Promise<{ hasteFS: IHasteFS; moduleMap: IModuleMap }>;
 }
 
 export type HasteMapStatic<S = SerializableModuleMap> = {
@@ -114,7 +114,7 @@ export type FileMetaData = [
 
 export type MockData = Map<string, string>;
 export type ModuleMapData = Map<string, ModuleMapItem>;
-export type WatchmanClockSpec = string | {scm: {'mergebase-with': string}};
+export type WatchmanClockSpec = string | { scm: { 'mergebase-with': string } };
 export type WatchmanClocks = Map<string, WatchmanClockSpec>;
 export type HasteRegExp = RegExp | ((str: string) => boolean);
 
@@ -141,7 +141,7 @@ export type RawModuleMap = {
   mocks: MockData;
 };
 
-export type ModuleMapItem = {[platform: string]: ModuleMetaData};
+export type ModuleMapItem = { [platform: string]: ModuleMetaData };
 export type ModuleMetaData = [path: string, type: number];
 
 export type HType = {

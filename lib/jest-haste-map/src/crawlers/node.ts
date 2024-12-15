@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {spawn} from 'child_process';
+import { spawn } from 'child_process';
 import * as path from 'path';
 import * as fs from 'graceful-fs';
 import H from '../constants';
@@ -29,7 +29,7 @@ async function hasNativeFindSupport(
   }
 
   try {
-    return await new Promise(resolve => {
+    return await new Promise((resolve) => {
       // Check the find binary supports the non-POSIX -iname parameter wrapped in parens.
       const args = [
         '.',
@@ -43,11 +43,11 @@ async function hasNativeFindSupport(
         '*.js',
         ')',
       ];
-      const child = spawn('find', args, {cwd: __dirname});
+      const child = spawn('find', args, { cwd: __dirname });
       child.on('error', () => {
         resolve(false);
       });
-      child.on('exit', code => {
+      child.on('exit', (code) => {
         resolve(code === 0);
       });
     });
@@ -68,7 +68,7 @@ function find(
 
   function search(directory: string): void {
     activeCalls++;
-    fs.readdir(directory, {withFileTypes: true}, (err, entries) => {
+    fs.readdir(directory, { withFileTypes: true }, (err, entries) => {
       activeCalls--;
       if (err) {
         if (activeCalls === 0) {
@@ -165,13 +165,13 @@ function findNative(
     );
   }
   child.stdout.setEncoding('utf8');
-  child.stdout.on('data', data => (stdout += data));
+  child.stdout.on('data', (data) => (stdout += data));
 
   child.stdout.on('close', () => {
     const lines = stdout
       .trim()
       .split('\n')
-      .filter(x => !ignore(x));
+      .filter((x) => !ignore(x));
     const result: Result = [];
     let count = lines.length;
     if (count) {
@@ -208,7 +208,7 @@ export async function nodeCrawl(options: CrawlerOptions): Promise<{
 
   const useNativeFind = await hasNativeFindSupport(forceNodeFilesystemAPI);
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const callback = (list: Result) => {
       const files = new Map();
       const removedFiles = new Map(data.files);

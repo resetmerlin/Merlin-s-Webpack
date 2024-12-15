@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type {DependencyExtractor} from '../types';
+import type { DependencyExtractor } from '../types';
 
 const NOT_A_DOT = '(?<!\\.\\s*)';
 const CAPTURE_STRING_LITERAL = (pos: number) =>

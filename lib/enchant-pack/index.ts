@@ -1,13 +1,13 @@
-import { dirname, resolve, join } from "path";
-import { fileURLToPath } from "url";
-import { Worker } from "jest-worker";
-import fs, { readFileSync } from "fs";
-import JestHasteMap from "jest-haste-map";
-import Resolver from "jest-resolve";
-import { minify } from "terser";
-import { createHash } from "crypto";
-import { createServer } from "http";
-import { compress } from "brotli";
+import { dirname, resolve, join } from 'path';
+import { fileURLToPath } from 'url';
+import { Worker } from 'jest-worker';
+import fs, { readFileSync } from 'fs';
+import JestHasteMap from 'jest-haste-map';
+import Resolver from 'jest-resolve';
+import { minify } from 'terser';
+import { createHash } from 'crypto';
+import { createServer } from 'http';
+import { compress } from 'brotli';
 
 /**
  * MerlinBunlder is a bundler that uses hasted map( Facebook's haste module system) for collection.
@@ -53,20 +53,19 @@ class MerlinBundler {
 
     const dependencyGraph = await this.createDependencyGraph(
       hasteFS,
-      moduleMap
+      moduleMap,
     );
 
     const transpiledCode = await this.transformation(dependencyGraph);
 
-    const { filename, url, minifiedCode } = await this.optimization(
-      transpiledCode
-    );
+    const { filename, url, minifiedCode } =
+      await this.optimization(transpiledCode);
 
     const htmlName =
-      this._outputs.find((file) => /\.html$/.test(file)) ?? "index.html";
+      this._outputs.find((file) => /\.html$/.test(file)) ?? 'index.html';
 
-    fs.writeFileSync(filename, minifiedCode.code, "utf8");
-    fs.writeFileSync(url, minifiedCode.map, "utf8");
+    fs.writeFileSync(filename, minifiedCode.code, 'utf8');
+    fs.writeFileSync(url, minifiedCode.map, 'utf8');
     fs.writeFileSync(`${filename}.br`, compress(readFileSync(filename)));
 
     fs.writeFileSync(
@@ -84,7 +83,7 @@ class MerlinBundler {
           </body>
         </html>
       `,
-      "utf8"
+      'utf8',
     );
 
     fs.writeFileSync(`${htmlName}.br`, compress(readFileSync(htmlName)));
@@ -95,8 +94,8 @@ class MerlinBundler {
 
     this._hasteMap = await HasteMap.create(this._hasteMapOptions);
 
-    this._hasteMap.on("change", async ({ eventQueue }) => {
-      console.log("Detected file changes:", eventQueue);
+    this._hasteMap.on('change', async ({ eventQueue }) => {
+      console.log('Detected file changes:', eventQueue);
 
       await this._bundle();
     });
@@ -105,31 +104,31 @@ class MerlinBundler {
 
     if (this._dev) {
       const server = createServer((req, res) => {
-        if (req.url === "/") {
-          res.setHeader("Content-Type", "text/html");
-          res.setHeader("Content-Encoding", "br");
+        if (req.url === '/') {
+          res.setHeader('Content-Type', 'text/html');
+          res.setHeader('Content-Encoding', 'br');
           res.statusCode = 200;
 
-          const html = readFileSync("./index.html.br");
+          const html = readFileSync('./index.html.br');
           res.write(html);
           res.end();
         }
 
-        if (req.url.endsWith(".js")) {
+        if (req.url.endsWith('.js')) {
           res.setHeader(
-            "Content-Type",
-            "application/javascript; charset=utf-8"
+            'Content-Type',
+            'application/javascript; charset=utf-8',
           );
-          res.setHeader("Content-Encoding", "br");
+          res.setHeader('Content-Encoding', 'br');
           res.statusCode = 200;
 
-          const javascript = readFileSync("." + req.url + ".br");
+          const javascript = readFileSync('.' + req.url + '.br');
           res.write(javascript);
           res.end();
         }
       });
 
-      server.listen(5173, "localhost", () => {
+      server.listen(5173, 'localhost', () => {
         console.log(`Server is running on http://localhost:5173`);
       });
     }
@@ -175,10 +174,10 @@ class MerlinBundler {
           .map((dependencyName) => [
             dependencyName,
             resolver.resolveModule(module, dependencyName),
-          ])
+          ]),
       );
 
-      const code = fs.readFileSync(module, "utf8");
+      const code = fs.readFileSync(module, 'utf8');
 
       const metadata = {
         id: id++,
@@ -199,10 +198,10 @@ class MerlinBundler {
    */
   async transformation(dependencyGraph) {
     const worker = new Worker(
-      join(dirname(fileURLToPath(import.meta.url)), "worker.js"),
+      join(dirname(fileURLToPath(import.meta.url)), 'worker.js'),
       {
         enableWorkerThreads: true,
-      }
+      },
     );
 
     const results = await Promise.all(
@@ -220,15 +219,15 @@ class MerlinBundler {
               new RegExp(
                 `require\\(('|")${dependencyName.replace(
                   /[\/.]/g,
-                  "\\$&"
-                )}\\1\\)`
+                  '\\$&',
+                )}\\1\\)`,
               ),
-              `require(${dependency.id})`
+              `require(${dependency.id})`,
             );
           }
 
           return MerlinBundler.wrapModule(id, code);
-        })
+        }),
     );
 
     worker.end();
@@ -246,7 +245,7 @@ class MerlinBundler {
     const minifiedCode = await this.minification(
       bundledCode,
       hashedFileName,
-      sourceMapName
+      sourceMapName,
     );
 
     return minifiedCode;
@@ -270,33 +269,33 @@ class MerlinBundler {
 
   retrieveMetadataForOpt(bundledResult) {
     const outputs = this._outputs;
-    const code = fs.readFileSync("./require.js", "utf8");
+    const code = fs.readFileSync('./require.js', 'utf8');
 
-    const outputFile = outputs.find((file) => /\.js$/.test(file)).split(".");
+    const outputFile = outputs.find((file) => /\.js$/.test(file)).split('.');
 
     const extension = outputFile.pop();
     const filename = outputFile.shift();
 
     if (!new Set(this._hasteMapOptions.extensions).has(extension)) {
-      throw new Error("Extension missmatch!");
+      throw new Error('Extension missmatch!');
     }
 
-    const bundledCode = [code, ...bundledResult, "requireModule(0);"].join(
-      "\n"
+    const bundledCode = [code, ...bundledResult, 'requireModule(0);'].join(
+      '\n',
     );
 
-    const hash = createHash("sha256").update(bundledCode).digest("hex");
+    const hash = createHash('sha256').update(bundledCode).digest('hex');
 
     const sourceMapName = MerlinBundler.getHashedFileName(
       filename,
       hash,
       extension,
-      true
+      true,
     );
     const hashedFileName = MerlinBundler.getHashedFileName(
       filename,
       hash,
-      extension
+      extension,
     );
 
     return { sourceMapName, hashedFileName, bundledCode };
@@ -315,15 +314,15 @@ class MerlinBundler {
   }
 }
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "csr");
+const root = join(dirname(fileURLToPath(import.meta.url)), 'csr');
 
-const entryPoint = resolve(process.cwd(), "csr/index.js");
+const entryPoint = resolve(process.cwd(), 'csr/index.js');
 
-const outputs = ["test.js", "index.html"];
+const outputs = ['test.js', 'index.html'];
 
 const hasteMapOptions = {
-  extensions: ["js"],
-  name: "jest-bundler",
+  extensions: ['js'],
+  name: 'jest-bundler',
   platforms: [],
   rootDir: root,
   roots: [root],

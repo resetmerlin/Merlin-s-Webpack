@@ -5,16 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {globsToMatcher, replacePathSepForGlob} from 'jest-util';
+import { globsToMatcher, replacePathSepForGlob } from 'jest-util';
 import H from './constants';
 import * as fastPath from './lib/fast_path';
-import type {FileData, IHasteFS} from './types';
+import type { FileData, IHasteFS } from './types';
 
 export default class HasteFS implements IHasteFS {
   private readonly _rootDir: string;
   private readonly _files: FileData;
 
-  constructor({rootDir, files}: {rootDir: string; files: FileData}) {
+  constructor({ rootDir, files }: { rootDir: string; files: FileData }) {
     this._rootDir = rootDir;
     this._files = files;
   }
