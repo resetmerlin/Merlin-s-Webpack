@@ -1,18 +1,17 @@
 {
-  "name": "EnchantPack",
   "packageManager": "yarn@4.5.3",
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "workspaces": [
-    "lib/*"
+    "lib/*",
+    "configs/*"
   ],
-  "dependencies": {
-    "@types/node": "^18.17.0"
-  },
   "devDependencies": {
+    "@types/node": "^18.17.0",
     "eslint": "^8.50.0",
+    "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   }
 }
