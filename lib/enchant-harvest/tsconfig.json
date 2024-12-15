@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "types": ["jest", "node"], // Add "jest" and "node" for test and Node.js support
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true
+  },
+  "include": ["src/**/*", "tsconfig.test.json"],
+  "exclude": ["dist", "node_modules", "__tests__"]
+}
