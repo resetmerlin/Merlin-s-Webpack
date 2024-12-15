@@ -1,16 +1,21 @@
 {
   "name": "enchant-pack",
   "packageManager": "yarn@4.5.3",
-  "type": "module",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
+    ".": {
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@types/babel__core": "^7",
-    "@types/node": "^22.10.2"
+    "@types/node": "*"
   },
   "dependencies": {
     "jest-resolve": "^29.7.0",

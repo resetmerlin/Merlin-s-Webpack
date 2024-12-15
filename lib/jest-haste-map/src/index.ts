@@ -5,26 +5,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { createHash } from 'crypto';
-import { EventEmitter } from 'events';
-import { tmpdir } from 'os';
-import * as path from 'path';
-import { deserialize, serialize } from 'v8';
-import { type Stats, readFileSync, writeFileSync } from 'graceful-fs';
-import type { Config } from '@jest/types';
-import { escapePathForRegex } from 'jest-regex-util';
-import { invariant, requireOrImportModule } from 'jest-util';
-import { type JestWorkerFarm, Worker } from 'jest-worker';
-import HasteFS from './HasteFS';
-import HasteModuleMap from './ModuleMap';
-import H from './constants';
-import { nodeCrawl } from './crawlers/node';
-import { watchmanCrawl } from './crawlers/watchman';
-import getMockName from './getMockName';
-import * as fastPath from './lib/fast_path';
-import getPlatformExtension from './lib/getPlatformExtension';
-import isWatchmanInstalled from './lib/isWatchmanInstalled';
-import normalizePathSep from './lib/normalizePathSep';
+import { createHash } from "crypto";
+import { EventEmitter } from "events";
+import { tmpdir } from "os";
+import * as path from "path";
+import { deserialize, serialize } from "v8";
+import { type Stats, readFileSync, writeFileSync } from "graceful-fs";
+import type { Config } from "@jest/types";
+import { escapePathForRegex } from "jest-regex-util";
+import { invariant, requireOrImportModule } from "jest-util";
+import { type JestWorkerFarm, Worker } from "jest-worker";
+import HasteFS from "./HasteFS";
+import HasteModuleMap from "./ModuleMap";
+import H from "./constants";
+import { nodeCrawl } from "./crawlers/node";
+import { watchmanCrawl } from "./crawlers/watchman";
+import getMockName from "./getMockName";
+import * as fastPath from "./lib/fast_path";
+import getPlatformExtension from "./lib/getPlatformExtension";
+import isWatchmanInstalled from "./lib/isWatchmanInstalled";
+import normalizePathSep from "./lib/normalizePathSep";
 import type {
   ChangeEvent,
   CrawlerOptions,
@@ -44,16 +44,16 @@ import type {
   ModuleMetaData,
   SerializableModuleMap,
   WorkerMetadata,
-} from './types';
-import { FSEventsWatcher } from './watchers/FSEventsWatcher';
+} from "./types";
+import { FSEventsWatcher } from "./watchers/FSEventsWatcher";
 // @ts-expect-error: not converted to TypeScript - it's a fork: https://github.com/jestjs/jest/pull/10919
-import NodeWatcher from './watchers/NodeWatcher';
+import NodeWatcher from "./watchers/NodeWatcher";
 // @ts-expect-error: not converted to TypeScript - it's a fork: https://github.com/jestjs/jest/pull/5387
-import WatchmanWatcher from './watchers/WatchmanWatcher';
-import { getSha1, worker } from './worker';
+import WatchmanWatcher from "./watchers/WatchmanWatcher";
+import { getSha1, worker } from "./worker";
 // TypeScript doesn't like us importing from outside `rootDir`, but it doesn't
 // understand `require`.
-const { version: VERSION } = require('../package.json');
+const { version: VERSION } = require("../package.json");
 
 export type HasteMapOptions = {
   cacheDirectory?: string;
@@ -111,7 +111,7 @@ type Watcher = {
   close(): Promise<void>;
 };
 
-type HasteWorker = typeof import('./worker');
+type HasteWorker = typeof import("./worker");
 
 let isWatchmanInstalledPromise: Promise<boolean> | undefined;
 
@@ -123,15 +123,15 @@ export type {
   IHasteMap,
   IModuleMap,
   SerializableModuleMap,
-} from './types';
+} from "./types";
 
 const CHANGE_INTERVAL = 30;
 const MAX_WAIT_TIME = 240_000;
 const NODE_MODULES = `${path.sep}node_modules${path.sep}`;
 const PACKAGE_JSON = `${path.sep}package.json`;
-const VCS_DIRECTORIES = ['.git', '.hg', '.sl']
+const VCS_DIRECTORIES = [".git", ".hg", ".sl"]
   .map((vcs) => escapePathForRegex(path.sep + vcs + path.sep))
-  .join('|');
+  .join("|");
 
 type WorkerOptions = { forceInBand: boolean };
 
@@ -215,7 +215,7 @@ type WorkerOptions = { forceInBand: boolean };
  */
 export class HasteMap extends EventEmitter implements IHasteMap {
   private _buildPromise: Promise<InternalHasteMapObject> | null = null;
-  private _cachePath = '';
+  private _cachePath = "";
   private _changeInterval?: ReturnType<typeof setInterval>;
   private readonly _console: Console;
   private readonly _options: InternalOptions;
@@ -274,11 +274,11 @@ export class HasteMap extends EventEmitter implements IHasteMap {
       if (options.ignorePattern instanceof RegExp) {
         this._options.ignorePattern = new RegExp(
           `${options.ignorePattern.source}|${VCS_DIRECTORIES}`,
-          options.ignorePattern.flags,
+          options.ignorePattern.flags
         );
       } else {
         throw new TypeError(
-          'jest-haste-map: the `ignorePattern` option must be a RegExp',
+          "jest-haste-map: the `ignorePattern` option must be a RegExp"
         );
       }
     } else {
@@ -287,20 +287,20 @@ export class HasteMap extends EventEmitter implements IHasteMap {
 
     if (this._options.enableSymlinks && this._options.useWatchman) {
       throw new Error(
-        'jest-haste-map: enableSymlinks config option was set, but ' +
-          'is incompatible with watchman.\n' +
-          'Set either `enableSymlinks` to false or `useWatchman` to false.',
+        "jest-haste-map: enableSymlinks config option was set, but " +
+          "is incompatible with watchman.\n" +
+          "Set either `enableSymlinks` to false or `useWatchman` to false."
       );
     }
   }
 
   private async setupCachePath(options: HasteMapOptions): Promise<void> {
-    const rootDirHash = createHash('sha1')
+    const rootDirHash = createHash("sha1")
       .update(options.rootDir)
-      .digest('hex')
+      .digest("hex")
       .slice(0, 32);
-    let hasteImplHash = '';
-    let dependencyExtractorHash = '';
+    let hasteImplHash = "";
+    let dependencyExtractorHash = "";
 
     if (options.hasteImplModulePath) {
       const hasteImpl = require(options.hasteImplModulePath);
@@ -313,7 +313,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
       const dependencyExtractor =
         await requireOrImportModule<DependencyExtractor>(
           options.dependencyExtractor,
-          false,
+          false
         );
       if (dependencyExtractor.getCacheKey) {
         dependencyExtractorHash = String(dependencyExtractor.getCacheKey());
@@ -327,15 +327,15 @@ export class HasteMap extends EventEmitter implements IHasteMap {
       this._options.id,
       this._options.roots
         .map((root) => fastPath.relative(options.rootDir, root))
-        .join(':'),
-      this._options.extensions.join(':'),
-      this._options.platforms.join(':'),
+        .join(":"),
+      this._options.extensions.join(":"),
+      this._options.platforms.join(":"),
       this._options.computeSha1.toString(),
-      options.mocksPattern || '',
-      (options.ignorePattern || '').toString(),
+      options.mocksPattern || "",
+      (options.ignorePattern || "").toString(),
       hasteImplHash,
       dependencyExtractorHash,
-      this._options.computeDependencies.toString(),
+      this._options.computeDependencies.toString()
     );
   }
 
@@ -344,10 +344,10 @@ export class HasteMap extends EventEmitter implements IHasteMap {
     id: string,
     ...extra: Array<string>
   ): string {
-    const hash = createHash('sha1').update(extra.join(''));
+    const hash = createHash("sha1").update(extra.join(""));
     return path.join(
       tmpdir,
-      `${id.replaceAll(/\W/g, '-')}-${hash.digest('hex').slice(0, 32)}`,
+      `${id.replaceAll(/\W/g, "-")}-${hash.digest("hex").slice(0, 32)}`
     );
   }
 
@@ -390,7 +390,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
           rootDir,
         });
         const __hasteMapForTest =
-          (process.env.NODE_ENV === 'test' && hasteMap) || null;
+          (process.env.NODE_ENV === "test" && hasteMap) || null;
         await this._watch(hasteMap);
         return {
           __hasteMapForTest,
@@ -453,7 +453,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
     map: ModuleMapData,
     mocks: MockData,
     filePath: string,
-    workerOptions?: WorkerOptions,
+    workerOptions?: WorkerOptions
   ): Promise<void> | null {
     const rootDir = this._options.rootDir;
 
@@ -470,16 +470,16 @@ export class HasteMap extends EventEmitter implements IHasteMap {
       const existingModule = moduleMap[platform];
 
       if (existingModule && existingModule[H.PATH] !== module[H.PATH]) {
-        const method = this._options.throwOnModuleCollision ? 'error' : 'warn';
+        const method = this._options.throwOnModuleCollision ? "error" : "warn";
 
         this._console[method](
           [
             `jest-haste-map: Haste module naming collision: ${id}`,
-            '  The following files share their name; please adjust your hasteImpl:',
+            "  The following files share their name; please adjust your hasteImpl:",
             `    * <rootDir>${path.sep}${existingModule[H.PATH]}`,
             `    * <rootDir>${path.sep}${module[H.PATH]}`,
-            '',
-          ].join('\n'),
+            "",
+          ].join("\n")
         );
 
         if (this._options.throwOnModuleCollision) {
@@ -524,7 +524,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
     const fileMetadata = hasteMap.files.get(relativeFilePath);
     if (!fileMetadata) {
       throw new Error(
-        'jest-haste-map: File to process was not found in the haste map.',
+        "jest-haste-map: File to process was not found in the haste map."
       );
     }
 
@@ -546,7 +546,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
 
       fileMetadata[H.DEPENDENCIES] = metadata.dependencies
         ? metadata.dependencies.join(H.DEPENDENCY_DELIM)
-        : '';
+        : "";
 
       if (computeSha1) {
         fileMetadata[H.SHA1] = metadata.sha1;
@@ -555,12 +555,12 @@ export class HasteMap extends EventEmitter implements IHasteMap {
 
     // Callback called when the response from the worker is an error.
     const workerError = (error: Error | any) => {
-      if (typeof error !== 'object' || !error.message || !error.stack) {
+      if (typeof error !== "object" || !error.message || !error.stack) {
         error = new Error(error);
-        error.stack = ''; // Remove stack for stack-less errors.
+        error.stack = ""; // Remove stack for stack-less errors.
       }
 
-      if (!['ENOENT', 'EACCES'].includes(error.code)) {
+      if (!["ENOENT", "EACCES"].includes(error.code)) {
         throw error;
       }
 
@@ -599,17 +599,17 @@ export class HasteMap extends EventEmitter implements IHasteMap {
         const secondMockPath = fastPath.relative(rootDir, filePath);
         if (existingMockPath !== secondMockPath) {
           const method = this._options.throwOnModuleCollision
-            ? 'error'
-            : 'warn';
+            ? "error"
+            : "warn";
 
           this._console[method](
             [
               `jest-haste-map: duplicate manual mock found: ${mockPath}`,
-              '  The following files share their name; please delete one of them:',
+              "  The following files share their name; please delete one of them:",
               `    * <rootDir>${path.sep}${existingMockPath}`,
               `    * <rootDir>${path.sep}${secondMockPath}`,
-              '',
-            ].join('\n'),
+              "",
+            ].join("\n")
           );
 
           if (this._options.throwOnModuleCollision) {
@@ -698,7 +698,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
       // SHA-1, if requested, should already be present thanks to the crawler.
       const filePath = fastPath.resolve(
         this._options.rootDir,
-        relativeFilePath,
+        relativeFilePath
       );
       const promise = this._processFile(hasteMap, map, mocks, filePath);
       if (promise) {
@@ -716,14 +716,14 @@ export class HasteMap extends EventEmitter implements IHasteMap {
       (error) => {
         this._cleanup();
         throw error;
-      },
+      }
     );
   }
 
   private _cleanup() {
     const worker = this._worker;
 
-    if (worker && 'end' in worker) {
+    if (worker && "end" in worker) {
       worker.end();
     }
 
@@ -741,16 +741,16 @@ export class HasteMap extends EventEmitter implements IHasteMap {
    * Creates workers or parses files and extracts metadata in-process.
    */
   private _getWorker(
-    options: WorkerOptions | undefined,
+    options: WorkerOptions | undefined
   ): JestWorkerFarm<HasteWorker> | HasteWorker {
     if (!this._worker) {
       if (options?.forceInBand || this._options.maxWorkers <= 1) {
         this._worker = { getSha1, worker };
       } else {
-        this._worker = new Worker(require.resolve('./worker'), {
+        this._worker = new Worker(require.resolve("./worker"), {
           enableWorkerThreads: this._options.workerThreads,
-          exposedMethods: ['getSha1', 'worker'],
-          forkOptions: { serialization: 'json' },
+          exposedMethods: ["getSha1", "worker"],
+          forkOptions: { serialization: "json" },
           maxRetries: 3,
           numWorkers: this._options.maxWorkers,
         }) as JestWorkerFarm<HasteWorker>;
@@ -778,18 +778,18 @@ export class HasteMap extends EventEmitter implements IHasteMap {
     const retry = (retryError: Error) => {
       if (crawl === watchmanCrawl) {
         this._console.warn(
-          'jest-haste-map: Watchman crawl failed. Retrying once with node ' +
-            'crawler.\n' +
+          "jest-haste-map: Watchman crawl failed. Retrying once with node " +
+            "crawler.\n" +
             "  Usually this happens when watchman isn't running. Create an " +
             "empty `.watchmanconfig` file in your project's root folder or " +
-            'initialize a git or hg repository in your project.\n' +
-            `  ${retryError}`,
+            "initialize a git or hg repository in your project.\n" +
+            `  ${retryError}`
         );
         return nodeCrawl(crawlerOptions).catch((error) => {
           throw new Error(
-            'Crawler retry failed:\n' +
+            "Crawler retry failed:\n" +
               `  Original error: ${retryError.message}\n` +
-              `  Retry error: ${error.message}\n`,
+              `  Retry error: ${error.message}\n`
           );
         });
       }
@@ -821,8 +821,8 @@ export class HasteMap extends EventEmitter implements IHasteMap {
     const Watcher = (await this._shouldUseWatchman())
       ? WatchmanWatcher
       : FSEventsWatcher.isSupported()
-        ? FSEventsWatcher
-        : NodeWatcher;
+      ? FSEventsWatcher
+      : NodeWatcher;
 
     const extensions = this._options.extensions;
     const ignorePattern = this._options.ignorePattern;
@@ -842,13 +842,13 @@ export class HasteMap extends EventEmitter implements IHasteMap {
 
       return new Promise((resolve, reject) => {
         const rejectTimeout = setTimeout(
-          () => reject(new Error('Failed to start watch mode.')),
-          MAX_WAIT_TIME,
+          () => reject(new Error("Failed to start watch mode.")),
+          MAX_WAIT_TIME
         );
 
-        watcher.once('ready', () => {
+        watcher.once("ready", () => {
           clearTimeout(rejectTimeout);
-          watcher.on('all', onChange);
+          watcher.on("all", onChange);
           resolve(watcher);
         });
       });
@@ -867,7 +867,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
             rootDir,
           }),
         };
-        this.emit('change', changeEvent);
+        this.emit("change", changeEvent);
         eventsQueue = [];
       }
     };
@@ -876,7 +876,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
       type: string,
       filePath: string,
       root: string,
-      stat?: Stats,
+      stat?: Stats
     ) => {
       filePath = path.join(root, normalizePathSep(filePath));
       if (
@@ -892,7 +892,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
 
       // The file has been accessed, not modified
       if (
-        type === 'change' &&
+        type === "change" &&
         fileMetadata &&
         stat &&
         fileMetadata[H.MTIME] === stat.mtime.getTime()
@@ -911,7 +911,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
                 ((!event.stat && !stat) ||
                   (!!event.stat &&
                     !!stat &&
-                    event.stat.mtime.getTime() === stat.mtime.getTime())),
+                    event.stat.mtime.getTime() === stat.mtime.getTime()))
             )
           ) {
             return null;
@@ -969,17 +969,17 @@ export class HasteMap extends EventEmitter implements IHasteMap {
 
           // If the file was added or changed,
           // parse it and update the haste map.
-          if (type === 'add' || type === 'change') {
+          if (type === "add" || type === "change") {
             invariant(
               stat,
-              'since the file exists or changed, it should have stats',
+              "since the file exists or changed, it should have stats"
             );
             const fileMetadata: FileMetaData = [
-              '',
+              "",
               stat.mtime.getTime(),
               stat.size,
               0,
-              '',
+              "",
               null,
             ];
             hasteMap.files.set(relativeFilePath, fileMetadata);
@@ -988,7 +988,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
               hasteMap.map,
               hasteMap.mocks,
               filePath,
-              { forceInBand: true },
+              { forceInBand: true }
             );
             // Cleanup
             this._cleanup();
@@ -1006,7 +1006,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
         })
         .catch((error: Error) => {
           this._console.error(
-            `jest-haste-map: watch error:\n  ${error.stack}\n`,
+            `jest-haste-map: watch error:\n  ${error.stack}\n`
           );
         });
     };
@@ -1015,7 +1015,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
     return Promise.all(this._options.roots.map(createWatcher)).then(
       (watchers) => {
         this._watchers = watchers;
-      },
+      }
     );
   }
 
@@ -1030,7 +1030,7 @@ export class HasteMap extends EventEmitter implements IHasteMap {
   private _recoverDuplicates(
     hasteMap: InternalHasteMap,
     relativeFilePath: string,
-    moduleName: string,
+    moduleName: string
   ) {
     let dupsByPlatform = hasteMap.duplicates.get(moduleName);
     if (dupsByPlatform == null) {
@@ -1133,7 +1133,7 @@ export class DuplicateError extends Error {
   mockPath2: string;
 
   constructor(mockPath1: string, mockPath2: string) {
-    super('Duplicated files or mocks. Please check the console for more info');
+    super("Duplicated files or mocks. Please check the console for more info");
 
     this.mockPath1 = mockPath1;
     this.mockPath2 = mockPath2;
@@ -1147,4 +1147,3 @@ function copy<T extends Record<string, unknown>>(object: T): T {
 function copyMap<K, V>(input: Map<K, V>): Map<K, V> {
   return new Map(input);
 }
-

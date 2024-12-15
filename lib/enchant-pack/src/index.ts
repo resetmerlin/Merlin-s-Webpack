@@ -7,7 +7,10 @@ import Resolver from 'jest-resolve';
 import { minify } from 'terser';
 import { createHash } from 'crypto';
 import { createServer } from 'http';
-import { compress } from 'brotli';
+
+
+
+import { compress } from 'brotli'
 
 /**
  * MerlinBunlder is a bundler that uses hasted map( Facebook's haste module system) for collection.
