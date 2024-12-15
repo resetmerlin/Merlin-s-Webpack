@@ -2,11 +2,12 @@ import { dirname, resolve, join } from 'path';
 import { fileURLToPath } from 'url';
 import { Worker } from 'jest-worker';
 import fs, { readFileSync } from 'fs';
-import JestHasteMap from 'jest-haste-map';
 import Resolver from 'jest-resolve';
 import { minify } from 'terser';
 import { createHash } from 'crypto';
 import { createServer } from 'http';
+
+const {JestHasteMap} = require('jest-haste-map')
 
 
 
