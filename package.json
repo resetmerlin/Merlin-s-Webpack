@@ -6,12 +6,18 @@
     "format:check": "prettier --check ."
   },
   "workspaces": [
-    "lib/*",
-    "configs/*"
+    "lib/**/*",
+    "configs/**/*"
   ],
   "devDependencies": {
+    "@enchant/eslint-plugin-packageJSON": "workspace:^",
+    "@rushstack/eslint-patch": "^1.10.4",
     "@types/node": "^18.17.0",
-    "eslint": "^8.50.0",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "eslint": "^8",
+    "eslint-config-prettier": "^9",
+    "eslint-plugin-import": "^2",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   }

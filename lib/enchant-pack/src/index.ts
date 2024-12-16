@@ -147,6 +147,7 @@ class MerlinBundler {
     let id = 0;
 
     while (queue.length) {
+      eslint;
       const module = queue.shift();
       if (seen.has(module)) {
         continue;

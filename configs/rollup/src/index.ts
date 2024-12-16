@@ -16,10 +16,6 @@ exports.enchantDefaultRollupConfig = function enchantDefaultRollupConfig({
     throw new Error('You need to specify exports field of package.json');
   }
 
-  function removePackageJSON(key: string) {
-    return key !== './package.json';
-  }
-
   const entrypoints = Object.keys(packageJSON.exports).filter(removePackageJSON);
 
   const external = (pkg: string) => {
@@ -57,3 +53,7 @@ exports.enchantDefaultRollupConfig = function enchantDefaultRollupConfig({
     ];
   });
 };
+
+function removePackageJSON(key: string) {
+  return key !== './package.json';
+}

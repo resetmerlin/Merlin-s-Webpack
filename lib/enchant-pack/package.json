@@ -1,17 +1,28 @@
 {
   "name": "enchant-pack",
+  "purpose": "library-cjs",
   "packageManager": "yarn@4.5.3",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc"
   },
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
+      "require": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
   },
+  "output": {
+    "import": "./esm/index.mjs",
+    "main": "./dist/index.js",
+    "module": "./esm/index.mjs",
+    "types": "./dist/index.d.ts"
+  },
+  "files": [
+    "dist",
+    "esm"
+  ],
+  "main": "src/index.ts",
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@types/babel__core": "^7",
