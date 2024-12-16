@@ -1,5 +1,5 @@
 {
-  "name": "@enchant/rollup-config",
+  "name": "@enchant.js/rollup-config",
   "packageManager": "yarn@4.5.3",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
