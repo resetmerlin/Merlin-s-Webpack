@@ -1,5 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
+  "types": ["node"],
   "include": ["src/**/*"],
   "compilerOptions": {
     "checkJs": true,
