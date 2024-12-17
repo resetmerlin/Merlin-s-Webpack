@@ -1337,13 +1337,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@enchant/eslint-plugin-packageJSON@workspace:^, @enchant/eslint-plugin-packageJSON@workspace:configs/eslint/eslint-plugin-packageJSON":
+"@enchant/eslint-config@workspace:configs/eslint-config":
   version: 0.0.0-use.local
-  resolution: "@enchant/eslint-plugin-packageJSON@workspace:configs/eslint/eslint-plugin-packageJSON"
+  resolution: "@enchant/eslint-config@workspace:configs/eslint-config"
   dependencies:
-    "@types/node": "npm:^22.10.2"
+    "@types/eslint": "npm:^9.6.1"
+    "@types/node": "npm:^18.17.0"
     eslint: "npm:^9.17.0"
-    typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
 
@@ -2499,6 +2499,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/eslint@npm:^9.6.1":
+  version: 9.6.1
+  resolution: "@types/eslint@npm:9.6.1"
+  dependencies:
+    "@types/estree": "npm:*"
+    "@types/json-schema": "npm:*"
+  checksum: 10c0/69ba24fee600d1e4c5abe0df086c1a4d798abf13792d8cfab912d76817fe1a894359a1518557d21237fbaf6eda93c5ab9309143dee4c59ef54336d1b3570420e
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*, @types/estree@npm:1.0.6, @types/estree@npm:^1.0.0, @types/estree@npm:^1.0.6":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
@@ -2623,7 +2633,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.9":
+"@types/json-schema@npm:*, @types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.9":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: 10c0/a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
@@ -4168,7 +4178,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "enchant.js@workspace:."
   dependencies:
-    "@enchant/eslint-plugin-packageJSON": "workspace:^"
     "@rushstack/eslint-patch": "npm:^1.10.4"
     "@types/node": "npm:^18.17.0"
     "@typescript-eslint/eslint-plugin": "npm:^6"

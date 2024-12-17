@@ -10,7 +10,6 @@
     "configs/**/*"
   ],
   "devDependencies": {
-    "@enchant/eslint-plugin-packageJSON": "workspace:^",
     "@rushstack/eslint-patch": "^1.10.4",
     "@types/node": "^18.17.0",
     "@typescript-eslint/eslint-plugin": "^6",
