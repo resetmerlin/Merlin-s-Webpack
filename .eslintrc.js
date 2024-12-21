@@ -1,9 +1,7 @@
 require('@rushstack/eslint-patch/modern-module-resolution');
-require('@rushstack/eslint-patch/custom-config-package-names');
 
-module.exports = {
+const plugin = {
   root: true,
-
   env: {
     es6: true,
     node: true,
@@ -11,21 +9,16 @@ module.exports = {
     jest: true,
     'shared-node-browser': true,
   },
-
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    ecmaVersion: 'latest',
     ecmaFeatures: { jsx: true },
   },
-
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
-    '@enchant/eslint-plugin-packageJSON',
-  ],
-  plugins: ['@typescript-eslint', 'import'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  plugins: ['@typescript-eslint', 'import', '@enchant/package-json'],
   settings: { 'import/resolver': { typescript: {} }, react: { version: 'detect' } },
   rules: {
+    '@enchant/eslint-plugin-package-json/pkg-rule': 'error',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -61,3 +54,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports = plugin;

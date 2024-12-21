@@ -5,16 +5,18 @@
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
+  "type": "commonjs",
   "workspaces": [
     "lib/**/*",
     "configs/**/*"
   ],
   "devDependencies": {
+    "@enchant/eslint-plugin-package-json": "workspace:^",
     "@rushstack/eslint-patch": "^1.10.4",
     "@types/node": "^18.17.0",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
-    "eslint": "^8",
+    "eslint": "8.57.1",
     "eslint-config-prettier": "^9",
     "eslint-plugin-import": "^2",
     "prettier": "^3.4.2",
