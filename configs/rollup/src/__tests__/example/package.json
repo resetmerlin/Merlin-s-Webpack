@@ -1,0 +1,30 @@
+{
+  "name": "example",
+  "packageManager": "yarn@4.5.3",
+  "purpose": "browser-esm",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && rollup -c rollup.config.js"
+  },
+  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "require": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "output": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./esm/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "devDependencies": {
+    "@enchant.js/rollup-config": "workspace:^",
+    "@types/node": "^22.10.2",
+    "rollup": "^4.29.1",
+    "typescript": "^5.7.2"
+  }
+}
