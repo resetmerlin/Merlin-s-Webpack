@@ -5,7 +5,7 @@ interface Carrer {
   career: Record<string, Record<'contract' | 'full-time', { months: number; years: number }>>;
 }
 
-const Merlin: Carrer = {
+export const Merlin: Carrer = {
   age: 22,
   country: 'Korea',
   major: 'computer-science',

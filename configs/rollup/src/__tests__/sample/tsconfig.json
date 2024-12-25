@@ -3,7 +3,8 @@
   "types": ["node"],
   "compilerOptions": {
     "outDir": "./dist",
-    "declaration": true
+    "declaration": true,
+    "module": "CommonJS"
   },
   "include": ["./src/**/*"],
   "exclude": ["dist", "node_modules", "__tests__"]

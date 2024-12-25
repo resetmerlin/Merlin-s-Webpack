@@ -1,17 +1,20 @@
-import { PackageJson } from 'type-fest';
-import { FORMAT } from './utils';
+import { EnchantPackageJson, FORMAT } from './utils';
 
 interface IHandleEntryArgs {
   type: typeof FORMAT.NODE.SYNTAX | typeof FORMAT.BROWSER.SYNTAX;
-  exports: PackageJson['exports'];
+  exports: EnchantPackageJson['exports'];
   entrypoint: string;
 }
 
-export const handleESMEntrypoint = (exports: PackageJson['exports'], entrypoint: string): string | undefined | null =>
-  retrieveEntryPoint({ type: FORMAT.NODE.SYNTAX, exports, entrypoint });
+export const handleESMEntrypoint = (
+  exports: EnchantPackageJson['exports'],
+  entrypoint: string
+): string | undefined | null => retrieveEntryPoint({ type: FORMAT.NODE.SYNTAX, exports, entrypoint });
 
-export const handleCJSEntrypoint = (exports: PackageJson['exports'], entrypoint: string): string | undefined | null =>
-  retrieveEntryPoint({ type: FORMAT.BROWSER.SYNTAX, exports, entrypoint });
+export const handleCJSEntrypoint = (
+  exports: EnchantPackageJson['exports'],
+  entrypoint: string
+): string | undefined | null => retrieveEntryPoint({ type: FORMAT.BROWSER.SYNTAX, exports, entrypoint });
 
 function retrieveEntryPoint({ type, exports, entrypoint }: IHandleEntryArgs): string | undefined | null {
   if (typeof exports === 'string') {
@@ -33,6 +36,7 @@ function retrieveEntryPoint({ type, exports, entrypoint }: IHandleEntryArgs): st
   }
 
   if (typeof exports === 'object' && !Array.isArray(exports)) {
+    // @ts-ignore
     const entry = exports?.[entrypoint];
 
     if (typeof entry === 'string') {

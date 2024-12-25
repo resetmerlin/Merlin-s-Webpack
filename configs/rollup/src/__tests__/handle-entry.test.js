@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const { handleCJSEntrypoint, handleESMEntrypoint } = require('../handle-entry');
-const pkg = require('./example/package.json');
+const pkg = require('./e2e-target/package.json');
 
 describe('It should retrieve entry point', () => {
   const entrypoints = Object.keys(pkg.exports).filter(key => key !== './package.json');
