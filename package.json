@@ -12,13 +12,16 @@
   ],
   "devDependencies": {
     "@enchant/eslint-plugin-package-json": "workspace:^",
+    "@eslint/js": "^9.17.0",
+    "@eslint/json": "^0.9.0",
     "@rushstack/eslint-patch": "^1.10.4",
     "@types/node": "^18.17.0",
-    "@typescript-eslint/eslint-plugin": "^6",
-    "@typescript-eslint/parser": "^6",
-    "eslint": "8.57.1",
-    "eslint-config-prettier": "^9",
-    "eslint-plugin-import": "^2",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.14.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   }
