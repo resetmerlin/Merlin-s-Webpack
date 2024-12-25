@@ -1,4 +1,5 @@
 {
+  "purpose": "browser-esm",
   "name": "enchant-fiber",
   "packageManager": "yarn@4.5.3",
   "main": "dist/jasmine.js",
@@ -11,5 +12,19 @@
     "@rspack/core": "^1.1.6",
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.2"
+  },
+  "exports": {
+    ".": {
+      "require": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "output": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./esm/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
   }
 }

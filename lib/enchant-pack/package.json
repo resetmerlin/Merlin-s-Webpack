@@ -13,10 +13,11 @@
     "./package.json": "./package.json"
   },
   "output": {
-    "import": "./esm/index.mjs",
-    "main": "./dist/index.js",
-    "module": "./esm/index.mjs",
-    "types": "./dist/index.d.ts"
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./esm/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
   },
   "files": [
     "dist",
