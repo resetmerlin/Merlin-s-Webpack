@@ -1,0 +1,24 @@
+{
+  "name": "@enchant/eslint-plugin-package-json",
+  "packageManager": "yarn@4.5.3",
+  "main": "index.js",
+  "exports": {
+    ".": {
+      "require": "./src/index.js",
+      "default": "./src/index.js",
+      "import": "./src/index.js"
+    }
+  },
+  "devDependencies": {
+    "@eslint/json": "^0.9.0",
+    "@types/node": "^18.17.0",
+    "eslint": "^9.17.0"
+  },
+  "output": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./esm/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  }
+}

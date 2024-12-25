@@ -1,18 +1,38 @@
 {
   "name": "enchant-pack",
+  "purpose": "library-cjs",
   "packageManager": "yarn@4.5.3",
-  "type": "module",
-  "main": "./dist/index.js",
-  "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
+  "scripts": {
+    "build": "tsc"
   },
+  "exports": {
+    ".": {
+      "require": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "output": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./esm/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "esm"
+  ],
+  "main": "src/index.ts",
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@types/babel__core": "^7",
-    "@types/node": "^22.10.2"
+    "@types/brotli": "^1",
+    "@types/node": "*"
   },
   "dependencies": {
+    "brotli": "^1.3.3",
+    "enchant-harvest": "workspace:*",
     "jest-resolve": "^29.7.0",
     "jest-worker": "^29.7.0",
     "terser": "^5.37.0"
