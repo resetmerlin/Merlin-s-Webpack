@@ -113,6 +113,51 @@ async function fixVersionMismatches() {
         for (const dir of directoryLists) {
           updatePackageJson(dir, pkgName, 'workspace:*');
         }
+      } else {
+        const keys = [...versionVarietyMap.keys()];
+
+        console.log(
+          chalk.red(`The package `) +
+            chalk.bold.underline.red(`${pkgName}`) +
+            chalk.red(` is not listed in the root. However, it is listed in child packages variously:`) +
+            chalk.bold.underline.greenBright(` ${key.join(', ')}`)
+        );
+
+        const directoryLists = retrieveDir(pkgName);
+
+        const rootPkg = JSON.parse(fs.readFileSync(path.join(monorepoRoot, 'package.json'), 'utf8'));
+
+        const depVersionOptions = keys.map(val => {
+          return {
+            name: val,
+            value: val,
+          };
+        });
+        const resVersion = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'selection',
+            message: `You have various version of same dependency ${pkgName} in child packages, select a appropriate version:`,
+            choices: depVersionOptions,
+          },
+        ]);
+
+        const res = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'selection',
+            message: `You have duplicated dependency ${pkgName} in child packages, but it is not in the root of this repo.\n Select type of dependency to rewrite:`,
+            choices: depTypeOptions,
+          },
+        ]);
+
+        rootPkg[res.selection] = rootPkg[res.selection] || {};
+        rootPkg[res.selection][pkgName] = resVersion.selection;
+        fs.writeFileSync(path.join(monorepoRoot, 'package.json'), JSON.stringify(rootPkg, null, 2), 'utf8');
+
+        for (const dir of directoryLists) {
+          updatePackageJson(dir, pkgName, 'workspace:*');
+        }
       }
     }
   }
