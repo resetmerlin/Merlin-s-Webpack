@@ -70,10 +70,10 @@ for (const name of pkgListTable.keys()) {
     for (const dir of directoryLists) {
       const package = JSON.parse(fs.readFileSync(dir, 'utf-8'));
 
-      if (package.dependencies[name]) {
-        package.dependencies.name = pkgVersion;
-      } else if (package.devDependencies[name]) {
-        package.devDependencies.name = pkgVersion;
+      if (package.dependencies?.[name]) {
+        package.dependencies[name] = 'workspace:*';
+      } else if (package.devDependencies?.[name]) {
+        package.devDependencies[name] = 'workspace:*';
       }
 
       fs.writeFileSync(dir, JSON.stringify(package, null, 2), 'utf8');
