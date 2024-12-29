@@ -62,9 +62,34 @@ for (const name of pkgListTable.keys()) {
 
   if (pkgDeps.has(name)) {
     if (map.size === 1 && map.has(pkgDeps.get(name))) return;
+
+    const pkgVersion = pkgDeps.get(name);
+
+    const directoryLists = retrieveDir(name);
+
+    for (const dir of directoryLists) {
+      const package = JSON.parse(fs.readFileSync(dir, 'utf-8'));
+
+      if (package.dependencies[name]) {
+        package.dependencies.name = pkgVersion;
+      } else if (package.devDependencies[name]) {
+        package.devDependencies.name = pkgVersion;
+      }
+
+      fs.writeFileSync(dir, JSON.stringify(package, null, 2), 'utf8');
+    }
   }
 }
 
-console.log(pkgListTable);
-console.log(pkgDeps);
-console.log(packageJsonFiles);
+function retrieveDir(name) {
+  const stack = [];
+  for (const key of packageTable.keys()) {
+    const map = packageTable.get(key);
+
+    if (map[name]) {
+      stack.push(key);
+    }
+  }
+
+  return stack.filter(val => val !== path.join(monorepoRoot, 'package.json'));
+}
