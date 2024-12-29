@@ -19,6 +19,7 @@
     "@types/node": "^18.17.0",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
+    "chalk": "^5.4.1",
     "depcheck": "^1.4.7",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
