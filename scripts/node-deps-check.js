@@ -48,15 +48,15 @@ for (const dependencies of dependencyPerPackageTable.values()) {
 }
 
 for (const name of totalPackageVersionTable.keys()) {
-  let howManyDuplicated = 0;
+  let totalOccurrences = 0;
 
   const versionVarietyMap = totalPackageVersionTable.get(name);
 
   for (const frequency of versionVarietyMap.values()) {
-    howManyDuplicated += frequency;
+    totalOccurrences += frequency;
   }
 
-  if (howManyDuplicated === 1) {
+  if (totalOccurrences === 1) {
     totalPackageVersionTable.delete(name);
   }
 }
@@ -73,7 +73,9 @@ async function fixVersionMismatches() {
       console.log(
         chalk.red(`The package `) +
           chalk.bold.underline.red(`${pkgName}`) +
-          chalk.red(` is listed in the root. However, the child package mismatches with the root version.`)
+          chalk.red(
+            ` is listed in the root. However, the version used in child packages does not match the root version.`
+          )
       );
 
       const directoryLists = retrieveDir(pkgName);
@@ -88,7 +90,9 @@ async function fixVersionMismatches() {
           console.log(
             chalk.red(`The package `) +
               chalk.bold.underline.red(`${pkgName}`) +
-              chalk.red(` is not listed in the root. However, it is listed in child packages with the same version:`) +
+              chalk.red(
+                ` is not listed in the root. However, it is used in child packages with the following version:`
+              ) +
               chalk.bold.underline.greenBright(` ${key}`)
           );
         }
@@ -101,7 +105,7 @@ async function fixVersionMismatches() {
           {
             type: 'list',
             name: 'selection',
-            message: `You have duplicated dependency ${pkgName} in child packages, but it is not in the root of this repo.\n Select type of dependency to rewrite:`,
+            message: `The dependency ${pkgName} is used in child packages but not listed in the root package.json.\nChoose the type of dependency to add it as:`,
             choices: depTypeOptions,
           },
         ]);
@@ -119,8 +123,8 @@ async function fixVersionMismatches() {
         console.log(
           chalk.red(`The package `) +
             chalk.bold.underline.red(`${pkgName}`) +
-            chalk.red(` is not listed in the root. However, it is listed in child packages variously:`) +
-            chalk.bold.underline.greenBright(` ${key.join(', ')}`)
+            chalk.red(` is not listed in the root. However, it is used in child packages with multiple versions:`) +
+            chalk.bold.underline.greenBright(` ${keys.join(', ')}`)
         );
 
         const directoryLists = retrieveDir(pkgName);
@@ -133,11 +137,12 @@ async function fixVersionMismatches() {
             value: val,
           };
         });
+
         const resVersion = await inquirer.prompt([
           {
             type: 'list',
             name: 'selection',
-            message: `You have various version of same dependency ${pkgName} in child packages, select a appropriate version:`,
+            message: `The dependency ${pkgName} is used in child packages with multiple versions. Select the appropriate version to use:`,
             choices: depVersionOptions,
           },
         ]);
@@ -146,7 +151,7 @@ async function fixVersionMismatches() {
           {
             type: 'list',
             name: 'selection',
-            message: `You have duplicated dependency ${pkgName} in child packages, but it is not in the root of this repo.\n Select type of dependency to rewrite:`,
+            message: `You selected version ${resVersion.selection} for ${pkgName}, but it is not listed in the root package.json.\nChoose the type of dependency to add it as:`,
             choices: depTypeOptions,
           },
         ]);
@@ -187,13 +192,12 @@ function updatePackageJson(dir, pkgName, version) {
   }
 
   fs.writeFileSync(packagePath, JSON.stringify(packageData, null, 2), 'utf8');
-  console.log(chalk.blue(`Successfully updated ${pkgName} in ${path.basename(dir)}.`));
 }
 
 (async () => {
   try {
     await fixVersionMismatches();
-    console.log(chalk.green('All mismatches have been fixed!'));
+    console.log(chalk.green('All mismatches have been resolved!'));
   } catch (err) {
     console.error(chalk.red('An error occurred:'), err);
   }
