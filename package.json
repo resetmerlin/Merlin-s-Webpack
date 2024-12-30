@@ -3,7 +3,8 @@
   "packageManager": "yarn@4.5.3",
   "scripts": {
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "deps-check": "node ./scripts/node-deps-check.js"
   },
   "type": "commonjs",
   "workspaces": [
@@ -18,10 +19,16 @@
     "@types/node": "^18.17.0",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
+    "chalk": "^4",
+    "cli-boxes": "^3",
+    "depcheck": "^1.4.7",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "figlet": "^1.8.0",
+    "glob": "^11.0.0",
     "globals": "^15.14.0",
+    "inquirer": "^8",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   }
