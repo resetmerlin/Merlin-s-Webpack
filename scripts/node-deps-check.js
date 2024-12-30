@@ -161,52 +161,6 @@ function rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName) {
 }
 
 /**
- * Displays metadata in a CLI-friendly styled box.
- * @param {Array} metadata - Array of dependency objects with `name` and `location`.
- */
-function showResultsInCli(metadata) {
-  // Generate header using figlet
-  figlet('Resolved Dependencies', (err, header) => {
-    if (err) {
-      console.error(chalk.red('Error generating header with figlet.'));
-      header = 'Resolved Dependencies'; // Fallback header
-    }
-
-    // Print the header
-    console.log(chalk.green.bold(header));
-
-    // Combine metadata into a formatted string
-    const combinedMetadata = metadata
-      .map(
-        item =>
-          `${chalk.cyanBright('Package Name:')} ${chalk.bold(item.name)}\n${chalk.yellowBright('Location:')} ${chalk.italic(item.location)}`
-      )
-      .join('\n\n'); // Add extra space between entries for clarity
-
-    // Create a custom box using cli-boxes (e.g., round box style)
-    const boxStyle = cliBoxes.round; // You can change this to 'single', 'double', etc.
-    const horizontalBorder = boxStyle.top.repeat(70); // Adjust the box width
-    const topBorder = `${boxStyle.topLeft}${horizontalBorder}${boxStyle.topRight}`;
-    const bottomBorder = `${boxStyle.bottomLeft}${horizontalBorder}${boxStyle.bottomRight}`;
-    const verticalBorder = boxStyle.left;
-
-    // Add vertical borders to the content
-    const contentWithBorders = combinedMetadata
-      .split('\n')
-      .map(line => `${verticalBorder} ${line.padEnd(68)} ${verticalBorder}`) // Adjust padding for alignment
-      .join('\n');
-
-    // Display the box
-    console.log(topBorder);
-    console.log(contentWithBorders);
-    console.log(bottomBorder);
-
-    // Footer or success message
-    console.log(chalk.green.bold('\nAll mismatches have been resolved! 🚀'));
-  });
-}
-
-/**
  * Fix version mismatches across the monorepo by rewriting `package.json` files.
  * @param {Map<string, object>} depsGraphPerPkg - Dependency graph for each `package.json` file.
  */
@@ -298,6 +252,46 @@ async function fixVersionMismatches(depsGraphPerPkg) {
   }
 
   return results;
+}
+
+/**
+ * Displays metadata in a CLI-friendly styled box.
+ * @param {Array} metadata - Array of dependency objects with `name` and `location`.
+ */
+function showResultsInCli(metadata) {
+  // Generate header using figlet
+  figlet('Resolved Dependencies', (err, header) => {
+    if (err) {
+      console.error(chalk.red('Error generating header with figlet.'));
+      header = 'Resolved Dependencies'; // Fallback header
+    }
+
+    console.log(chalk.green.bold(header));
+
+    const combinedMetadata = metadata
+      .map(
+        item =>
+          `${chalk.cyanBright('Package Name:')} ${chalk.bold(item.name)}\n${chalk.yellowBright('Location:')} ${chalk.italic(item.location)}`
+      )
+      .join('\n\n');
+
+    const boxStyle = cliBoxes.round;
+    const horizontalBorder = boxStyle.top.repeat(70);
+    const topBorder = `${boxStyle.topLeft}${horizontalBorder}${boxStyle.topRight}`;
+    const bottomBorder = `${boxStyle.bottomLeft}${horizontalBorder}${boxStyle.bottomRight}`;
+    const verticalBorder = boxStyle.left;
+
+    const contentWithBorders = combinedMetadata
+      .split('\n')
+      .map(line => `${verticalBorder} ${line.padEnd(68)} ${verticalBorder}`)
+      .join('\n');
+
+    console.log(topBorder);
+    console.log(contentWithBorders);
+    console.log(bottomBorder);
+
+    console.log(chalk.green.bold('\nAll mismatches have been resolved! 🚀'));
+  });
 }
 
 const pkgJsonDirLists = getAllPackageJsonDir();
