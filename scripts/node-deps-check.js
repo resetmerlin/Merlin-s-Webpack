@@ -4,7 +4,9 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const { ROOT, INQUIRER_PROMPT } = require('./constants');
 const { readAndParseFile, writeOnFile } = require('./utils');
-
+const path = require('path');
+const figlet = require('figlet');
+const boxen = require('boxen');
 /**
  * Get all `package.json` file paths from the specified workspaces.
  * @returns {string[]} Array of paths to `package.json` files.
@@ -89,15 +91,15 @@ function getEntireDepsWithVersions(depsPerPkg) {
  * @param {string} [params.depsType] - Dependency type (`dependencies` or `devDependencies`).
  * @param {Map<string, object>} params.depsGraphPerPkg - Dependency graph for each `package.json` file.
  * @param {string} params.pkgName - Name of the package to rewrite.
+ * @returns {object[]} - A metadata of target to rewrite
  */
 function rewritePkgJsonFile({ version, depsType, depsGraphPerPkg, pkgName }) {
   if (version == null && depsType == null) {
-    rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName);
-    return;
+    return rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName);
   }
 
   rewriteRootPkgJsonFile(depsType, version, pkgName);
-  rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName);
+  return rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName);
 }
 
 /**
@@ -120,9 +122,11 @@ function rewriteRootPkgJsonFile(depsType, version, pkgName) {
  * Rewrite child `package.json` files to use workspace references (`workspace:*`) for a given package.
  * @param {Map<string, object>} depsGraphPerPkg - Dependency graph for each `package.json` file.
  * @param {string} pkgName - Name of the package to rewrite.
+ * @returns {object[]} - A metadata of target to rewrite
  */
 function rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName) {
   const dirLists = [];
+  const result = [];
 
   for (const dir of depsGraphPerPkg.keys()) {
     if (dir === ROOT.PACKAGE_JSON) continue;
@@ -143,7 +147,45 @@ function rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName) {
     }
 
     writeOnFile(dir, file);
+
+    const metadata = {
+      location: path.relative(ROOT.PATH, dir),
+      name: pkgName,
+    };
+
+    result.push(metadata);
   }
+
+  return result;
+}
+
+function showResultsInCli(metadata) {
+  figlet('Total Resolved Dependencies', (err, data) => {
+    if (err) {
+      console.error(chalk.red('Error generating header with figlet.'));
+      console.dir(err);
+      return;
+    }
+
+    console.log(chalk.green.bold(data));
+
+    const combinedMetadata = metadata
+      .map(item => {
+        return `${chalk.cyanBright('Package Name:')} ${chalk.bold(item.name)}\n${chalk.yellowBright('Location:')} ${chalk.italic(item.location)}\n`;
+      })
+      .join('\n');
+
+    const boxContent = boxen(combinedMetadata, {
+      padding: 1,
+      margin: 1,
+      borderStyle: 'round',
+      borderColor: 'cyan',
+    });
+
+    console.log(boxContent);
+
+    console.log(chalk.green.bold('All mismatches have been resolved!  🚀'));
+  });
 }
 
 /**
@@ -152,6 +194,7 @@ function rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName) {
  */
 async function fixVersionMismatches(depsGraphPerPkg) {
   const entirePkgVersions = getEntireDepsWithVersions(depsGraphPerPkg);
+  const results = [];
 
   const rootPkgDeps = new Map(
     Object.entries({
@@ -172,7 +215,8 @@ async function fixVersionMismatches(depsGraphPerPkg) {
           chalk.red(` is listed in the root, but the version used in child packages does not match the root version.`)
       );
 
-      rewritePkgJsonFile({ depsGraphPerPkg, pkgName });
+      const metadata = rewritePkgJsonFile({ depsGraphPerPkg, pkgName });
+      results.push(...metadata);
     } else {
       if (pkgVersions.size === 1) {
         const version = [...pkgVersions.keys()].shift();
@@ -191,7 +235,8 @@ async function fixVersionMismatches(depsGraphPerPkg) {
           },
         ]);
 
-        rewritePkgJsonFile({ version, depsType: depsType.selection, depsGraphPerPkg, pkgName });
+        const metadata = rewritePkgJsonFile({ version, depsType: depsType.selection, depsGraphPerPkg, pkgName });
+        results.push(...metadata);
       } else {
         const versions = [...pkgVersions.keys()];
 
@@ -222,10 +267,19 @@ async function fixVersionMismatches(depsGraphPerPkg) {
           },
         ]);
 
-        rewritePkgJsonFile({ version: version.selection, depsType: depsType.selection, depsGraphPerPkg, pkgName });
+        const metadata = rewritePkgJsonFile({
+          version: version.selection,
+          depsType: depsType.selection,
+          depsGraphPerPkg,
+          pkgName,
+        });
+
+        results.push(...metadata);
       }
     }
   }
+
+  return results;
 }
 
 const pkgJsonDirLists = getAllPackageJsonDir();
@@ -233,8 +287,8 @@ const depsGraphPerPkg = getDepsGraphPerPackage(pkgJsonDirLists);
 
 (async () => {
   try {
-    await fixVersionMismatches(depsGraphPerPkg);
-    console.log(chalk.green('All mismatches have been resolved!'));
+    const results = await fixVersionMismatches(depsGraphPerPkg);
+    showResultsInCli(results);
   } catch (err) {
     console.error(chalk.red('An error occurred:'), err);
   }
