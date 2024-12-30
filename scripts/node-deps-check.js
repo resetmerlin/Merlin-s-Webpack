@@ -8,12 +8,7 @@ const inquirer = require('inquirer');
 
 const workspaces = packageJson.workspaces;
 
-const monorepoRoot = path.resolve(__dirname, '../');
-
-const depTypeOptions = [
-  { name: 'dependency', value: 'dependencies' },
-  { name: 'devDependency', value: 'devDependencies' },
-];
+const monorepoRoot = path.resolve(process.cwd());
 
 const packagePathLists = workspaces.flatMap(workspace =>
   glob.sync(`${workspace}/package.json`, {
@@ -64,6 +59,11 @@ for (const name of totalPackageVersionTable.keys()) {
 const rootPackageTable = new Map(Object.entries({ ...packageJson.devDependencies, ...packageJson.dependencies }));
 
 async function fixVersionMismatches() {
+  const depTypeOptions = [
+    { name: 'dependency', value: 'dependencies' },
+    { name: 'devDependency', value: 'devDependencies' },
+  ];
+
   for (const pkgName of totalPackageVersionTable.keys()) {
     const versionVarietyMap = totalPackageVersionTable.get(pkgName);
 
