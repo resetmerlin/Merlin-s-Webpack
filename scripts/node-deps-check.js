@@ -96,7 +96,7 @@ function rewritePkgJsonFile({ version, depsType, depsGraphPerPkg, pkgName }) {
     return;
   }
 
-  rewriteRootPkgJsonFile(depsType, version);
+  rewriteRootPkgJsonFile(depsType, version, pkgName);
   rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName);
 }
 
@@ -105,8 +105,13 @@ function rewritePkgJsonFile({ version, depsType, depsGraphPerPkg, pkgName }) {
  * @param {string} depsType - Dependency type (`dependencies` or `devDependencies`).
  * @param {string} version - Selected version to use.
  */
-function rewriteRootPkgJsonFile(depsType, version) {
+function rewriteRootPkgJsonFile(depsType, version, pkgName) {
   const file = { ...ROOT.PACKAGE_JSON_CONTENT };
+
+  if (!file[depsType]) {
+    file[depsType] = {};
+  }
+
   file[depsType][pkgName] = version;
   writeOnFile(ROOT.PACKAGE_JSON, file);
 }
