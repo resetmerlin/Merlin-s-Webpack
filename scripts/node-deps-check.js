@@ -6,7 +6,8 @@ const { ROOT, INQUIRER_PROMPT } = require('./constants');
 const { readAndParseFile, writeOnFile } = require('./utils');
 const path = require('path');
 const figlet = require('figlet');
-const boxen = require('boxen');
+const cliBoxes = require('cli-boxes');
+
 /**
  * Get all `package.json` file paths from the specified workspaces.
  * @returns {string[]} Array of paths to `package.json` files.
@@ -159,32 +160,49 @@ function rewriteChildPkgJsonFile(depsGraphPerPkg, pkgName) {
   return result;
 }
 
+/**
+ * Displays metadata in a CLI-friendly styled box.
+ * @param {Array} metadata - Array of dependency objects with `name` and `location`.
+ */
 function showResultsInCli(metadata) {
-  figlet('Total Resolved Dependencies', (err, data) => {
+  // Generate header using figlet
+  figlet('Resolved Dependencies', (err, header) => {
     if (err) {
       console.error(chalk.red('Error generating header with figlet.'));
-      console.dir(err);
-      return;
+      header = 'Resolved Dependencies'; // Fallback header
     }
 
-    console.log(chalk.green.bold(data));
+    // Print the header
+    console.log(chalk.green.bold(header));
 
+    // Combine metadata into a formatted string
     const combinedMetadata = metadata
-      .map(item => {
-        return `${chalk.cyanBright('Package Name:')} ${chalk.bold(item.name)}\n${chalk.yellowBright('Location:')} ${chalk.italic(item.location)}\n`;
-      })
+      .map(
+        item =>
+          `${chalk.cyanBright('Package Name:')} ${chalk.bold(item.name)}\n${chalk.yellowBright('Location:')} ${chalk.italic(item.location)}`
+      )
+      .join('\n\n'); // Add extra space between entries for clarity
+
+    // Create a custom box using cli-boxes (e.g., round box style)
+    const boxStyle = cliBoxes.round; // You can change this to 'single', 'double', etc.
+    const horizontalBorder = boxStyle.top.repeat(70); // Adjust the box width
+    const topBorder = `${boxStyle.topLeft}${horizontalBorder}${boxStyle.topRight}`;
+    const bottomBorder = `${boxStyle.bottomLeft}${horizontalBorder}${boxStyle.bottomRight}`;
+    const verticalBorder = boxStyle.left;
+
+    // Add vertical borders to the content
+    const contentWithBorders = combinedMetadata
+      .split('\n')
+      .map(line => `${verticalBorder} ${line.padEnd(68)} ${verticalBorder}`) // Adjust padding for alignment
       .join('\n');
 
-    const boxContent = boxen(combinedMetadata, {
-      padding: 1,
-      margin: 1,
-      borderStyle: 'round',
-      borderColor: 'cyan',
-    });
+    // Display the box
+    console.log(topBorder);
+    console.log(contentWithBorders);
+    console.log(bottomBorder);
 
-    console.log(boxContent);
-
-    console.log(chalk.green.bold('All mismatches have been resolved!  🚀'));
+    // Footer or success message
+    console.log(chalk.green.bold('\nAll mismatches have been resolved! 🚀'));
   });
 }
 
