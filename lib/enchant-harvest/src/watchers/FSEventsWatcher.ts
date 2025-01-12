@@ -10,7 +10,7 @@ import { EventEmitter } from 'events';
 import * as path from 'path';
 import anymatch, { type Matcher } from 'anymatch';
 import * as fs from 'graceful-fs';
-import micromatch = require('micromatch');
+import micromatch from 'micromatch';
 // @ts-expect-error no types
 import walker from 'walker';
 
@@ -28,11 +28,7 @@ const DELETE_EVENT = 'delete';
 const ADD_EVENT = 'add';
 const ALL_EVENT = 'all';
 
-type FsEventsWatcherEvent =
-  | typeof CHANGE_EVENT
-  | typeof DELETE_EVENT
-  | typeof ADD_EVENT
-  | typeof ALL_EVENT;
+type FsEventsWatcherEvent = typeof CHANGE_EVENT | typeof DELETE_EVENT | typeof ADD_EVENT | typeof ALL_EVENT;
 
 /**
  * Export `FSEventsWatcher` class.
@@ -52,11 +48,8 @@ export class FSEventsWatcher extends EventEmitter {
     return fsevents !== null;
   }
 
-  private static normalizeProxy(
-    callback: (normalizedPath: string, stats: fs.Stats) => void,
-  ) {
-    return (filepath: string, stats: fs.Stats): void =>
-      callback(path.normalize(filepath), stats);
+  private static normalizeProxy(callback: (normalizedPath: string, stats: fs.Stats) => void) {
+    return (filepath: string, stats: fs.Stats): void => callback(path.normalize(filepath), stats);
   }
 
   private static recReaddir(
@@ -65,12 +58,10 @@ export class FSEventsWatcher extends EventEmitter {
     fileCallback: (normalizedPath: string, stats: fs.Stats) => void,
     endCallback: () => void,
     errorCallback: () => void,
-    ignored?: Matcher,
+    ignored?: Matcher
   ) {
     walker(dir)
-      .filterDir(
-        (currentDir: string) => !ignored || !anymatch(ignored, currentDir),
-      )
+      .filterDir((currentDir: string) => !ignored || !anymatch(ignored, currentDir))
       .on('dir', FSEventsWatcher.normalizeProxy(dirCallback))
       .on('file', FSEventsWatcher.normalizeProxy(fileCallback))
       .on('error', errorCallback)
@@ -86,12 +77,10 @@ export class FSEventsWatcher extends EventEmitter {
       ignored?: Matcher;
       glob: string | Array<string>;
       dot: boolean;
-    },
+    }
   ) {
     if (!fsevents) {
-      throw new Error(
-        '`fsevents` unavailable (this watcher can only be used on Darwin)',
-      );
+      throw new Error('`fsevents` unavailable (this watcher can only be used on Darwin)');
     }
 
     super();
@@ -100,15 +89,11 @@ export class FSEventsWatcher extends EventEmitter {
     this.ignored = opts.ignored;
     this.glob = Array.isArray(opts.glob) ? opts.glob : [opts.glob];
 
-    this.hasIgnore =
-      Boolean(opts.ignored) && !(Array.isArray(opts) && opts.length > 0);
+    this.hasIgnore = Boolean(opts.ignored) && !(Array.isArray(opts) && opts.length > 0);
     this.doIgnore = opts.ignored ? anymatch(opts.ignored) : () => false;
 
     this.root = path.resolve(dir);
-    this.fsEventsWatchStopper = fsevents.watch(
-      this.root,
-      this.handleEvent.bind(this),
-    );
+    this.fsEventsWatchStopper = fsevents.watch(this.root, this.handleEvent.bind(this));
 
     this._tracked = new Set();
     FSEventsWatcher.recReaddir(
@@ -121,7 +106,7 @@ export class FSEventsWatcher extends EventEmitter {
       },
       this.emit.bind(this, 'ready'),
       this.emit.bind(this, 'error'),
-      this.ignored,
+      this.ignored
     );
   }
 
