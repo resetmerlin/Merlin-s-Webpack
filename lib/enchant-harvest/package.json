@@ -1,21 +1,29 @@
 {
+  "purpose": "node-esm",
   "name": "enchant-harvest",
   "packageManager": "yarn@4.5.3",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
   "scripts": {
-    "build": "rollup --config",
+    "build": "rollup -c",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.js",
+      "require": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "output": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
     }
   },
+  "tsconfig": "./tsconfig.json",
   "dependencies": {
     "@jest/types": "^29.6.3",
     "anymatch": "^3.0.3",
@@ -32,6 +40,7 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
+    "@enchant.js/rollup-config": "workspace:^",
     "@jest/globals": "^29.7.0",
     "@jest/test-utils": "^0.0.0",
     "@types/babel__core": "^7",

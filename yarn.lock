@@ -4336,6 +4336,7 @@ __metadata:
     "@babel/core": "npm:^7.26.0"
     "@babel/preset-env": "npm:^7.26.0"
     "@babel/preset-typescript": "npm:^7.26.0"
+    "@enchant.js/rollup-config": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
     "@jest/test-utils": "npm:^0.0.0"
     "@jest/types": "npm:^29.6.3"
