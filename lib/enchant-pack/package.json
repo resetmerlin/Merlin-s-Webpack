@@ -1,7 +1,8 @@
 {
   "name": "enchant-pack",
-  "purpose": "library-cjs",
+  "purpose": "node-esm",
   "packageManager": "yarn@4.5.3",
+  "tsconfig": "./",
   "scripts": {
     "build": "tsc"
   },
