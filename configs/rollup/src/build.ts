@@ -41,7 +41,7 @@ function buildJS({
         ...(isESMFormat
           ? {
               dir: path.dirname(output),
-              entryFileNames: `[name].${path.extname(output)}`,
+              entryFileNames: `[name]${path.extname(output)}`,
               preserveModulesRoot: path.dirname(input),
             }
           : { file: output }),
